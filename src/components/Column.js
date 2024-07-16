@@ -1,22 +1,26 @@
 import React from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import Card from './Card';
+import { Card as MuiCard, CardContent, Typography, Box } from '@mui/material';
+import './Column.css';
 
 const Column = ({ lane, handleDragOver, handleDrop, handleDragStart }) => {
   return (
-    <div key={lane.id} className="col-sm">
-      <div className="card mt-3">
-        <div className="card-body">
-          <h5 className="card-title">{lane.title}</h5>
-          <p className="card-text">{lane.label}</p>
-          <div className="list-group" onDragOver={(e) => handleDragOver(e)} onDrop={(e) => handleDrop(e, lane.id)}>
-            {lane.cards.map(card => (
-              <Card key={card.id} card={card} handleDragStart={(e, cardId) => handleDragStart(e, cardId, lane.id)} />
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
+    <MuiCard className="column-card" style={{ padding: '1rem', backgroundColor: '#F0F4F8' }}>
+      <CardContent>
+        <Typography variant="h6">{lane.title}</Typography>
+        <Typography variant="subtitle1" color="textSecondary">{lane.label}</Typography>
+        <Box
+          className="list-group"
+          onDragOver={(e) => handleDragOver(e)}
+          onDrop={(e) => handleDrop(e, lane.id)}
+          sx={{ mt: 2 }}
+        >
+          {lane.cards.map(card => (
+            <Card key={card.id} card={card} handleDragStart={(e, cardId) => handleDragStart(e, cardId, lane.id)} />
+          ))}
+        </Box>
+      </CardContent>
+    </MuiCard>
   );
 };
 

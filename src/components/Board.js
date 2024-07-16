@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import Column from './Column';
+import { Container, Grid } from '@mui/material';
+import './Board.css';
 
 const Board = () => {
   const [lanes, setLanes] = useState([
@@ -36,9 +37,7 @@ const Board = () => {
     e.dataTransfer.setData('laneId', laneId);
   };
 
-  const handleDragOver = (e) => {
-    e.preventDefault();
-  };
+  const handleDragOver = (e) => e.preventDefault();
 
   const handleDrop = (e, targetLaneId) => {
     e.preventDefault();
@@ -49,28 +48,27 @@ const Board = () => {
       const sourceLaneIndex = lanes.findIndex(lane => lane.id === sourceLaneId);
       const targetLaneIndex = lanes.findIndex(lane => lane.id === targetLaneId);
       const cardIndex = lanes[sourceLaneIndex].cards.findIndex(card => card.id === cardId);
-
       const card = lanes[sourceLaneIndex].cards.splice(cardIndex, 1)[0];
       lanes[targetLaneIndex].cards.push(card);
-
       setLanes([...lanes]);
     }
   };
 
   return (
-    <div className="container-fluid">
-      <div className="row">
+    <Container maxWidth="lg" className="container">
+      <Grid container spacing={3}>
         {lanes.map(lane => (
-          <Column
-            key={lane.id}
-            lane={lane}
-            handleDragOver={handleDragOver}
-            handleDrop={handleDrop}
-            handleDragStart={handleDragStart}
-          />
+          <Grid item xs={4} key={lane.id}>
+            <Column
+              lane={lane}
+              handleDragOver={handleDragOver}
+              handleDrop={handleDrop}
+              handleDragStart={handleDragStart}
+            />
+          </Grid>
         ))}
-      </div>
-    </div>
+      </Grid>
+    </Container>
   );
 };
 

@@ -1,5 +1,9 @@
 /* Navbar.css */
-.MuiAppBar-root {
-    background-color: #3f51b5;
+.navbar {
+    background-color: #FFFFD1 !important;
+  }
+  
+  .navbar .MuiTypography-root, .navbar .MuiButton-root, .navbar .MuiIconButton-root {
+    color: #333333 !important;
   }
   

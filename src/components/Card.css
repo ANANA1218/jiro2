@@ -2,8 +2,15 @@
 .list-group-item {
     padding: 10px;
     margin: 10px 0;
-    background-color: #fff;
-    border: 1px solid #ccc;
+    background-color: #FFFFFF;
+    border: 1px solid #CCCCCC;
     border-radius: 5px;
+  }
+  
+  .card-item {
+    background-color: #FFFFFF; /* Fond des Cartes */
+    border: 1px solid #CCCCCC; /* Bordure des Cartes */
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
   
