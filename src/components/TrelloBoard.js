@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { db } from './Firebase'; // Assuming this imports Firebase Firestore correctly
-import { collection, getDocs, setDoc, doc, onSnapshot } from 'firebase/firestore'; // Import necessary Firestore functions
+import { collection, getDocs, setDoc, doc, onSnapshot, addDoc } from 'firebase/firestore'; // Import necessary Firestore functions
 import { v4 as uuidv4 } from 'uuid'; // Import uuid library for generating unique IDs
 
 const TrelloBoard = () => {
   const [lanes, setLanes] = useState([]);
   const [editingCardId, setEditingCardId] = useState(null); // State to track which card is being edited
   const [editFormData, setEditFormData] = useState({ title: '', description: '' }); // State to store edit form data
+  const [newLaneTitle, setNewLaneTitle] = useState(''); // State to store new lane title
 
   // Fetch data from Firestore and set up real-time listener
   useEffect(() => {
@@ -179,6 +180,28 @@ const TrelloBoard = () => {
     handleEditCard(laneId, cardId, editFormData.title, editFormData.description);
   };
 
+  const handleAddLane = async (newLaneTitle) => {
+    try {
+      const newLane = {
+        id: uuidv4(),
+        title: newLaneTitle,
+        cards: []
+      };
+
+      const updatedLanes = [...lanes, newLane];
+      setLanes(updatedLanes);
+
+      await addDoc(collection(db, 'lanes'), newLane);
+
+      setNewLaneTitle(''); // Clear input field after adding new lane
+
+      console.log(`Added new lane "${newLaneTitle}" to Firestore`);
+
+    } catch (error) {   
+      console.error('Error adding new lane:', error);
+    }
+  };
+
   return (
     <div className="container-fluid">
       <div className="row">
@@ -276,6 +299,31 @@ const TrelloBoard = () => {
             </div>
           </div>
         ))}
+
+        {/* Form for adding a new lane */}
+        <div className="col-sm">
+          <div className="card mt-3">
+            <div className="card-body">
+              <h5 className="card-title">Add New Lane</h5>
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                handleAddLane(newLaneTitle);
+              }}>
+                <div className="mb-3">
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Enter Lane Title"
+                    value={newLaneTitle}
+                    onChange={(e) => setNewLaneTitle(e.target.value)}
+                    required
+                  />
+                </div>
+                <button type="submit" className="btn btn-sm btn-primary mb-2">Add Lane</button>
+              </form>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
