@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { auth } from '../Firebase'; // Corriger le chemin d'importation
 import './Login.css';
 
@@ -49,6 +49,9 @@ const Login = () => {
                 <button type="submit" className="btn-auth">Se connecter</button>
                 {error && <p className="error-message">{error}</p>}
             </form>
+            <div className="reset-password-link">
+                <Link to="/reset-password">Mot de passe oublié ?</Link>
+            </div>
         </div>
     );
 };
