@@ -1,24 +1,30 @@
-// App.js
-
 import React from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './App.css';
-import TrelloBoard from './components/TrelloBoard'; // Import the TrelloBoard component
+import 'bootstrap/dist/css/bootstrap.min.css';
+import TrelloBoard from './components/TrelloBoard';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import Login from './components/Auth/Login';
+import Signup from './components/Auth/Signup';
+import ResetPassword from './components/Auth/Resetpassword';
 
 function App() {
   return (
-    <div className="App">
-      <main>
+    <Router>
+      <div className="App">
         <Navbar />
-        <TrelloBoard /> {/* Use the TrelloBoard component here */}
-   
-       </main>
-       <footer>
+        <main className="container mt-5">
+          <Routes>
+            <Route path="/" element={<TrelloBoard />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+          </Routes>
+        </main>
         <Footer />
-        </footer>
-    </div>
+      </div>
+    </Router>
   );
 }
 

@@ -1,18 +1,29 @@
 import React, { useState } from 'react';
-
-
+import { useNavigate } from 'react-router-dom';
+import { auth } from '../Firebase'; // Corriger le chemin d'importation
+import './Signup.css';
 
 const Signup = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const navigate = useNavigate();
 
-
+    const handleSignup = async (e) => {
+        e.preventDefault();
+        setError('');
+        try {
+            await auth.createUserWithEmailAndPassword(email, password);
+            navigate('/'); // Rediriger après l'inscription réussie
+        } catch (error) {
+            setError(error.message);
+        }
+    };
 
     return (
         <div className="auth-container">
             <h2>Inscription</h2>
-            <form >
+            <form onSubmit={handleSignup}>
                 <div className="form-group">
                     <label htmlFor="email">Email</label>
                     <input

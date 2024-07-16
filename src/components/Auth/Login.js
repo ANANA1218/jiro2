@@ -1,20 +1,29 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Importer useNavigate
-
+import { useNavigate } from 'react-router-dom';
+import { auth } from '../Firebase'; // Corriger le chemin d'importation
 import './Login.css';
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-    const navigate = useNavigate(); // Utiliser useNavigate à la place de navigate
+    const navigate = useNavigate();
 
-    
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        setError('');
+        try {
+            await auth.signInWithEmailAndPassword(email, password);
+            navigate('/'); // Rediriger après la connexion réussie
+        } catch (error) {
+            setError('Email ou mot de passe incorrect.');
+        }
+    };
 
     return (
-        <div className="login-container">
+        <div className="auth-container">
             <h2>Connexion</h2>
-            <form >
+            <form onSubmit={handleLogin}>
                 <div className="form-group">
                     <label htmlFor="email">Email</label>
                     <input
@@ -37,7 +46,7 @@ const Login = () => {
                         required
                     />
                 </div>
-                <button type="submit" className="btn-login">Se connecter</button>
+                <button type="submit" className="btn-auth">Se connecter</button>
                 {error && <p className="error-message">{error}</p>}
             </form>
         </div>
