@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { auth } from '../Firebase'; // Corriger le chemin d'importation
+import {  createUserWithEmailAndPassword  } from 'firebase/auth';
 import './Signup.css';
 
 const Signup = () => {
@@ -9,7 +10,7 @@ const Signup = () => {
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    const handleSignup = async (e) => {
+   /** const handleSignup = async (e) => {
         e.preventDefault();
         setError('');
         try {
@@ -19,11 +20,33 @@ const Signup = () => {
             setError(error.message);
         }
     };
+*/ 
+
+const onSubmit = async (e) => {
+    e.preventDefault()
+   
+    await createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+          // Signed in
+          const user = userCredential.user;
+          console.log(user);
+          navigate("/login")
+          // ...
+      })
+      .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.log(errorCode, errorMessage);
+          // ..
+      });
+
+ 
+  }
 
     return (
         <div className="auth-container">
             <h2>Inscription</h2>
-            <form onSubmit={handleSignup}>
+            <form onSubmit={onSubmit}>
                 <div className="form-group">
                     <label htmlFor="email">Email</label>
                     <input
@@ -49,6 +72,12 @@ const Signup = () => {
                 <button type="submit" className="btn-auth">S'inscrire</button>
                 {error && <p className="error-message">{error}</p>}
             </form>
+            <p>
+                        Already have an account?{' '}
+                        <NavLink to="/login" >
+                            Sign in
+                        </NavLink>
+                    </p>     
         </div>
     );
 };
