@@ -1,11 +1,11 @@
 import React from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import './Footer.css';
 
 const Footer = () => {
   return (
-    <footer className="footer mt-auto py-3 bg-light">
+    <footer className="footer">
       <div className="container">
-        <span className="text-muted">Place sticky footer content here.</span>
+        <p>&copy; 2023 JIRO by Annabelle&Ikram. All rights reserved.</p>
       </div>
     </footer>
   );
