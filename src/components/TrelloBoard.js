@@ -12,6 +12,8 @@ import {
   getDoc,
   updateDoc,
 } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom';
+import {  signOut } from "firebase/auth";
 
 const TrelloBoard = () => {
   const [lanes, setLanes] = useState([]);
@@ -252,6 +254,21 @@ const TrelloBoard = () => {
     }
   };
 
+
+  const navigate = useNavigate();
+ 
+  const handleLogout = () => {               
+      signOut(auth).then(() => {
+      // Sign-out successful.
+          navigate("/");
+          console.log("Signed out successfully")
+      }).catch((error) => {
+      // An error happened.
+      });
+  }
+
+
+  
   return (
     <div className="container-fluid">
       <div className="row">
