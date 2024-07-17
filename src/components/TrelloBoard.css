@@ -1,0 +1,44 @@
+
+.container-fluid {
+    padding: 20px;
+  }
+  
+  .input-group {
+    margin-bottom: 15px;
+  }
+  
+  .card-body {
+    padding: 15px;
+  }
+  
+  .list-group-item {
+    margin-bottom: 10px;
+  }
+  
+  .card-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+  }
+  
+  .card-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+  
+  .card-actions .btn-link {
+    margin: 0;
+  }
+  
+  .mt-3 {
+    margin-top: 20px !important;
+  }
+  
+  .mb-1 {
+    margin-bottom: 5px !important;
+  }
+  
+  .mb-2 {
+    margin-bottom: 10px !important;
+  }
+  
