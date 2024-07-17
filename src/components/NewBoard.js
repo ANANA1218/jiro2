@@ -1,29 +1,34 @@
 import React, { useState } from 'react';
-import {useNavigate } from 'react-router-dom';
-import { collection, addDoc } from "firebase/firestore";
-import { auth, db } from './Firebase'; // Importez 'auth' depuis votre fichier Firebase
+import { useNavigate } from 'react-router-dom';
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { auth, db } from './Firebase';
 
 const NewBoard = () => {
     const [boardName, setBoardName] = useState('');
-
     const navigate = useNavigate();
 
     const handleCreateBoard = async () => {
         try {
-            // Ajout du tableau à Firestore
             const docRef = await addDoc(collection(db, "boards"), {
                 name: boardName,
                 createdBy: auth.currentUser.uid,
-                createdAt: new Date(),
+                createdAt: serverTimestamp(),
             });
+
+            // Create a default lane for the new board
+            await addDoc(collection(db, `boards/${docRef.id}/lanes`), {
+                title: 'Default Lane',
+                cards: []
+            });
+
             console.log("Board created with ID: ", docRef.id);
-            
-            // Redirection vers la page d'accueil après la création du tableau
-            navigate('/');
+
+            // Redirect to the board page after creating the board
+            navigate(`/trello-board/${docRef.id}`);
         } catch (error) {
             console.error("Error adding document: ", error);
         }
-    }
+    };
 
     return (
         <div>
@@ -38,5 +43,5 @@ const NewBoard = () => {
         </div>
     );
 }
- 
+
 export default NewBoard;
