@@ -1,16 +1,11 @@
 /* Footer.css */
-.footer {
-    background-color: #BEE1E6; /* Fond bleu pastel */
-    color: #333333; /* Couleur du texte */
-    padding: 0px 0; /* Ajuster le padding selon vos besoins */
-    text-align: center;
 
-    width: 100%; /* Assurer que le footer prend toute la largeur */
-    margin: 0; /* Supprimer les marges */
-  }
-  
-  .footer .container {
-    margin: 0 auto;
-    padding: 0; /* Supprimer le padding */
-  }
-  
+.footer {
+  background-color: #343a40;
+  color: white;
+  padding: 10px 0;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+}

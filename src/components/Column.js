@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Card from './Card';
 import './Column.css';
 
-const Lane = ({ lane, onUpdateLaneTitle, onCreateCard, onUpdateCard, onDeleteCard, onDeleteLane, onDragStart, onDragOver, onDrop }) => {
+const Column = ({ lane, onUpdateLaneTitle, onCreateCard, onUpdateCard, onDeleteCard, onDeleteLane, onDragStart, onDragOver, onDrop }) => {
   const [newCardTitle, setNewCardTitle] = useState('');
   const [newCardDescription, setNewCardDescription] = useState('');
 
@@ -77,4 +77,4 @@ const Lane = ({ lane, onUpdateLaneTitle, onCreateCard, onUpdateCard, onDeleteCar
   );
 };
 
-export default Lane;
+export default Column;

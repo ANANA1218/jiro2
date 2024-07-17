@@ -1,13 +1,4 @@
+/* Board.css */
 .container-fluid {
-    padding-top: 20px;
-    background-color: #FFFFD1; /* Fond Principal */
-}
-
-.container {
-    background: rgba(255, 255, 255, 0.8); /* Ajouter un fond blanc semi-transparent pour le contenu */
-    border-radius: 10px;
-    display: flex;
-    justify-content: space-around; /* Pour espacer uniformément les colonnes */
-    padding: 20px;
-    width: 100%;
+  padding-top: 20px;
 }

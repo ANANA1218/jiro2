@@ -1,18 +1,8 @@
 /* Card.css */
 .list-group-item {
-    padding: 10px;
-    margin: 10px 0;
-    background-color: #FFFFFF;
-    border: 1px solid #CCCCCC;
-    border-radius: 5px;
-    width: 100%; /* Pour que les cartes prennent toute la largeur de la colonne */
-}
-
-.card-item {
-    background-color: #FFFFFF; /* Fond des Cartes */
-    border: 1px solid #CCCCCC; /* Bordure des Cartes */
-    border-radius: 5px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    width: 100%; /* Pour que les cartes prennent toute la largeur de la colonne */
-    padding: 15px; /* Pour plus d'espace autour du contenu */
+  padding: 10px;
+  margin: 10px 0;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }

@@ -1,26 +1,4 @@
 /* Navbar.css */
-.navbar {
-    background-color: #FFFFD1 !important;
-  }
-  
-  .toolbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    padding: 0 10px; /* Adjust the padding as needed */
-  }
-  
-  .navbar-logo {
-    height: 80px; /* Adjust the height to make it three times larger */
-  }
-  
-  .navbar-links {
-    display: flex;
-    gap: 20px; /* Space between the links */
-  }
-  
-  .navbar .MuiButton-root, .navbar .MuiIconButton-root {
-    color: #333333 !important;
-  }
-  
+.MuiAppBar-root {
+  background-color: #3f51b5;
+}

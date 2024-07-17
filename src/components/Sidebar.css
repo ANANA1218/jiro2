@@ -1,8 +1,5 @@
 /* Sidebar.css */
 .sidebar {
-    width: 250px;
-    padding: 10px;
-    background-color: #FFFFD1; /* Fond de la Sidebar */
-    color: #333333; /* Couleur du texte */
-  }
-  
+  width: 250px;
+  padding: 10px;
+}
