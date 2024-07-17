@@ -1,15 +1,13 @@
 /* Column.css */
 .column-card {
-    background-color: #F0F4F8;
-    padding: 10px;
-    margin: 10px 0;
-  }
-  
-  .card-item {
-    margin: 10px 0;
-    background-color: #FFFFFF;
-    border: 1px solid #CCCCCC;
-    border-radius: 5px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  }
-  
+  background-color: #f9f9f9;
+  padding: 10px;
+}
+
+.task-item {
+  padding: 5px;
+  margin: 5px 0;
+  background-color: #ffffff;
+  border-radius: 5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
