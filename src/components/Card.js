@@ -1,7 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useState } from 'react';
 
-const Card = ({ card, onUpdateCard, onDeleteCard, onDragStart }) => {
+const Card = ({ card, laneId, onUpdateCard, onDeleteCard, onDragStart }) => {
   const [editMode, setEditMode] = useState(false);
   const [editCardTitle, setEditCardTitle] = useState(card.title);
   const [editCardDescription, setEditCardDescription] = useState(card.description);
@@ -13,7 +13,7 @@ const Card = ({ card, onUpdateCard, onDeleteCard, onDragStart }) => {
       return;
     }
 
-    onUpdateCard(card.id, editCardTitle, editCardDescription, editCardLabel);
+    onUpdateCard(laneId, card.id, editCardTitle, editCardDescription, editCardLabel);
     setEditMode(false);
   };
 

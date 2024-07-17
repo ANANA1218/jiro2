@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './TrelloBoard.css'; // Import custom CSS file
-import { db } from './Firebase'; // Import your Firebase configuration
+import './Board.css';
+import { db } from './Firebase'; 
 import { collection, getDocs, setDoc, doc, onSnapshot, deleteDoc, getDoc, updateDoc } from 'firebase/firestore';
-import { useNavigate } from 'react-router-dom';
-import { signOut } from "firebase/auth";
-import Lane from './Column'; // Import your Lane component
+import Lane from './Column'; 
 
 const TrelloBoard = () => {
   const [lanes, setLanes] = useState([]);
@@ -23,7 +21,7 @@ const TrelloBoard = () => {
       } catch (error) {
         console.error('Error fetching lanes:', error);
       }
-    }; 
+    };
 
     const unsubscribe = onSnapshot(collection(db, 'lanes'), snapshot => {
       const updatedLanes = snapshot.docs.map(doc => ({
@@ -105,7 +103,7 @@ const TrelloBoard = () => {
     try {
       const laneRef = doc(db, 'lanes', laneId);
       const laneDoc = await getDoc(laneRef);
-  
+
       if (laneDoc.exists()) {
         const updatedCards = laneDoc.data().cards.map(card => {
           if (card.id === cardId) {
@@ -118,15 +116,16 @@ const TrelloBoard = () => {
           }
           return card;
         });
-  
+
         await updateDoc(laneRef, { cards: updatedCards });
         console.log(`Updated card "${cardId}" in lane "${laneId}" in Firestore`);
+      } else {
+        console.log(`Lane "${laneId}" does not exist`);
       }
     } catch (error) {
       console.error('Error updating card:', error);
     }
   };
- 
 
   const onDeleteCard = async (laneId, cardId) => {
     try {
@@ -137,70 +136,38 @@ const TrelloBoard = () => {
         const updatedCards = laneDoc.data().cards.filter(card => card.id !== cardId);
         await updateDoc(laneRef, { cards: updatedCards });
         console.log(`Deleted card "${cardId}" from lane "${laneId}" in Firestore`);
+      } else {
+        console.log(`Lane "${laneId}" does not exist`);
       }
     } catch (error) {
       console.error('Error deleting card:', error);
     }
   };
 
-  const onEditCard = (laneId, cardId, newTitle, newDescription, newLabel) => {
-    // Implement logic to set the card into edit mode in the UI
-    // This function should handle how the Card component switches to edit mode
-    // You can use local state or any UI state management technique here
-    console.log(`Editing card "${cardId}" in lane "${laneId}"`);
-    // Example:
-    // setEditMode(true);
-    // setEditCardTitle(newTitle);
-    // setEditCardDescription(newDescription);
-    // setEditCardLabel(newLabel);
-  };
-
-  const onDragStart = (e, cardId, laneId) => {
+  const handleDragStart = (e, cardId) => {
     e.dataTransfer.setData('cardId', cardId);
-    e.dataTransfer.setData('laneId', laneId);
   };
 
-  const onDragOver = (e) => {
+  const handleDragOver = (e) => {
     e.preventDefault();
   };
 
-  const onDrop = async (e, targetLaneId) => {
-    e.preventDefault();
+  const handleDrop = async (e, targetLaneId) => {
     const cardId = e.dataTransfer.getData('cardId');
-    const sourceLaneId = e.dataTransfer.getData('laneId');
+    const sourceLane = lanes.find(lane => lane.cards.some(card => card.id === cardId));
+    const targetLane = lanes.find(lane => lane.id === targetLaneId);
 
-    if (sourceLaneId !== targetLaneId) {
+    if (sourceLane && targetLane && sourceLane.id !== targetLane.id) {
+      const cardToMove = sourceLane.cards.find(card => card.id === cardId);
+      const updatedSourceCards = sourceLane.cards.filter(card => card.id !== cardId);
+      const updatedTargetCards = [...targetLane.cards, cardToMove];
+
       try {
-        const sourceLaneRef = doc(db, 'lanes', sourceLaneId);
-        const targetLaneRef = doc(db, 'lanes', targetLaneId);
-
-        const sourceLaneDoc = await getDoc(sourceLaneRef);
-        const targetLaneDoc = await getDoc(targetLaneRef);
-
-        if (sourceLaneDoc.exists() && targetLaneDoc.exists()) {
-          const cardIndex = sourceLaneDoc.data().cards.findIndex(card => card.id === cardId);
-
-          if (cardIndex !== -1) {
-            const card = sourceLaneDoc.data().cards[cardIndex];
-            const updatedSourceCards = [...sourceLaneDoc.data().cards];
-            updatedSourceCards.splice(cardIndex, 1);
-            const updatedTargetCards = [...targetLaneDoc.data().cards, card];
-
-            await Promise.all([
-              updateDoc(sourceLaneRef, { cards: updatedSourceCards }),
-              updateDoc(targetLaneRef, { cards: updatedTargetCards })
-            ]);
-
-            console.log(`Moved card "${cardId}" from "${sourceLaneId}" to "${targetLaneId}" in Firestore`);
-          }
-        } else if (!sourceLaneDoc.exists() && targetLaneDoc.exists()) {
-          const updatedTargetCards = [...targetLaneDoc.data().cards, { id: cardId, title: '', description: '', label: '' }];
-          await updateDoc(targetLaneRef, { cards: updatedTargetCards });
-
-          console.log(`Moved card "${cardId}" to "${targetLaneId}" in Firestore`);
-        }
+        await updateDoc(doc(db, 'lanes', sourceLane.id), { cards: updatedSourceCards });
+        await updateDoc(doc(db, 'lanes', targetLane.id), { cards: updatedTargetCards });
+        console.log(`Moved card "${cardId}" from lane "${sourceLane.id}" to lane "${targetLane.id}"`);
       } catch (error) {
-        console.error('Error updating Firestore:', error);
+        console.error('Error moving card:', error);
       }
     }
   };
@@ -208,26 +175,20 @@ const TrelloBoard = () => {
   return (
     <div className="container-fluid">
       <div className="row">
-        <div className="col-md-12 text-center">
-          <div className="input-group mb-3">
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Enter lane title"
-              value={newLaneTitle}
-              onChange={(e) => setNewLaneTitle(e.target.value)}
-            />
-            <button
-              className="btn btn-outline-primary"
-              type="button"
-              onClick={handleCreateLane}
-            >
-              Add Lane
-            </button>
-          </div>
+        <div className="col-md-4">
+          <input
+            type="text"
+            className="form-control mb-2"
+            placeholder="New lane title"
+            value={newLaneTitle}
+            onChange={(e) => setNewLaneTitle(e.target.value)}
+          />
+          <button className="btn btn-primary" onClick={handleCreateLane}>
+            Add Lane
+          </button>
         </div>
       </div>
-      <div className="row">
+      <div className="row mt-3">
         {lanes.map(lane => (
           <Lane
             key={lane.id}
@@ -237,10 +198,9 @@ const TrelloBoard = () => {
             onUpdateCard={onUpdateCard}
             onDeleteCard={onDeleteCard}
             onDeleteLane={handleDeleteLane}
-            onDragStart={onDragStart}
-            onDragOver={onDragOver}
-            onDrop={onDrop}
-            onEditCard={onEditCard} // Pass onEditCard as prop
+            onDragStart={handleDragStart}
+            onDragOver={handleDragOver}
+            onDrop={handleDrop}
           />
         ))}
       </div>

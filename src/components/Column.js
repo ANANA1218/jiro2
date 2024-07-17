@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import Card from './Card'; // Import your Card component
+import Card from './Card';  // Assurez-vous d'importer correctement le composant Card
 
-const Lane = ({ lane, onUpdateLaneTitle, onCreateCard, onUpdateCard, onDeleteCard, onDeleteLane, onDragStart, onDragOver, onDrop, onEditCard }) => {
+const Lane = ({ lane, onUpdateLaneTitle, onCreateCard, onUpdateCard, onDeleteCard, onDeleteLane, onDragStart, onDragOver, onDrop }) => {
   const [newCardTitle, setNewCardTitle] = useState('');
   const [newCardDescription, setNewCardDescription] = useState('');
 
@@ -58,10 +57,10 @@ const Lane = ({ lane, onUpdateLaneTitle, onCreateCard, onUpdateCard, onDeleteCar
               <Card
                 key={card.id}
                 card={card}
+                laneId={lane.id}
                 onUpdateCard={onUpdateCard}
-                onDeleteCard={onDeleteCard}
+                onDeleteCard={(cardId) => onDeleteCard(lane.id, cardId)}
                 onDragStart={onDragStart}
-                onEditCard={onEditCard} // Pass onEditCard as prop to Card
               />
             ))}
           </div>
