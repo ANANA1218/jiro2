@@ -17,6 +17,10 @@ const Card = ({ card, laneId, onUpdateCard, onDeleteCard, onDragStart }) => {
         setEditMode(false);
     };
 
+    const handleDeleteButtonClick = () => {
+        onDeleteCard(card.id);
+    };
+
     return (
         <div className="list-group-item" draggable onDragStart={(e) => onDragStart(e, card.id)}>
             {editMode ? (
@@ -48,7 +52,7 @@ const Card = ({ card, laneId, onUpdateCard, onDeleteCard, onDragStart }) => {
                         <button className="btn btn-link btn-sm" onClick={() => setEditMode(true)}>
                             Edit
                         </button>
-                        <button className="btn btn-link btn-sm text-danger" onClick={() => onDeleteCard(card.id)}>
+                        <button className="btn btn-link btn-sm text-danger" onClick={handleDeleteButtonClick}>
                             Delete
                         </button>
                     </div>

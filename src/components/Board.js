@@ -118,9 +118,83 @@ const Board = () => {
         } catch (error) {
             console.error('Error updating card:', error);
         }
+    
     };
 
-    const handleDeleteCard = async (laneId, cardId) => {
+  /*  const handleDeleteCard = async (laneId, cardId) => {
+        try {
+            const laneRef = doc(db, `boards/${effectiveBoardId}/lanes`, laneId);
+            const laneDoc = await getDoc(laneRef);
+
+            if (laneDoc.exists()) {
+                const updatedCards = laneDoc.data().cards.filter(card => card.id !== cardId);
+                await updateDoc(laneRef, { cards: updatedCards });
+                setLanes(lanes.map(lane => (lane.id === laneId ? { ...lane, cards: updatedCards } : lane)));
+                console.log(`Deleted card "${cardId}" from lane "${laneId}" in Firestore`);
+            }
+        } catch (error) {
+            console.error('Error deleting card:', error);
+        }
+    };*/
+
+    const handleDragStart = (e, cardId) => {
+        e.dataTransfer.setData('cardId', cardId);
+    };
+
+    const handleDragOver = (e) => {
+        e.preventDefault();
+    };
+
+    const handleDrop = async (e, cardId, sourceLaneId, targetLaneId) => {
+        e.preventDefault();
+        const sourceLane = lanes.find(lane => lane.id === sourceLaneId);
+        const targetLane = lanes.find(lane => lane.id === targetLaneId);
+    
+        if (sourceLane && targetLane) {
+            const cardToMove = sourceLane.cards.find(card => card.id === cardId);
+            let updatedSourceCards = [...sourceLane.cards];
+            let updatedTargetCards = [...targetLane.cards];
+    
+            if (sourceLaneId !== targetLaneId) {
+                updatedSourceCards = sourceLane.cards.filter(card => card.id !== cardId);
+                updatedTargetCards = [...targetLane.cards, cardToMove];
+            } else {
+                const sourceIndex = sourceLane.cards.findIndex(card => card.id === cardId);
+                updatedTargetCards = [...sourceLane.cards];
+                updatedTargetCards.splice(sourceIndex, 1);
+                updatedTargetCards.splice(e.dataTransfer.getData('index'), 0, cardToMove);
+            }
+    
+            try {
+                await updateDoc(doc(db, `boards/${effectiveBoardId}/lanes`, sourceLaneId), { cards: updatedSourceCards });
+                await updateDoc(doc(db, `boards/${effectiveBoardId}/lanes`, targetLaneId), { cards: updatedTargetCards });
+                console.log(`Moved card "${cardId}" from lane "${sourceLaneId}" to lane "${targetLaneId}"`);
+                setLanes(lanes.map(lane => {
+                    if (lane.id === sourceLaneId) {
+                        return { ...lane, cards: updatedSourceCards };
+                    }
+                    if (lane.id === targetLaneId) {
+                        return { ...lane, cards: updatedTargetCards };
+                    }
+                    return lane;
+                }));
+            } catch (error) {
+                console.error('Error moving card:', error);
+            }
+        }
+    };
+    
+    const handleDrop = (e) => {
+        e.preventDefault();
+        const cardId = e.dataTransfer.getData('cardId');
+        const sourceLaneId = e.dataTransfer.getData('sourceLaneId');
+        onDrop(e, cardId, sourceLaneId, lane.id);
+    };
+    
+    
+    
+     // Function to delete a card
+     const handleDeleteCard = async (laneId, cardId) => {
         try {
             const laneRef = doc(db, `boards/${effectiveBoardId}/lanes`, laneId);
             const laneDoc = await getDoc(laneRef);
@@ -135,58 +209,6 @@ const Board = () => {
             console.error('Error deleting card:', error);
         }
     };
-
-    const handleDragStart = (e, cardId) => {
-        e.dataTransfer.setData('cardId', cardId);
-    };
-
-    const handleDragOver = (e) => {
-        e.preventDefault();
-    };
-    const handleDrop = async (e, targetLaneId) => {
-        e.preventDefault();
-        const cardId = e.dataTransfer.getData('cardId');
-        const sourceLaneId = e.dataTransfer.getData('sourceLaneId');
-        const sourceIndex = e.dataTransfer.getData('index');
-    
-        const sourceLane = lanes.find(lane => lane.id === sourceLaneId);
-        const targetLane = lanes.find(lane => lane.id === targetLaneId);
-    
-        if (sourceLane && targetLane) {
-            const cardToMove = sourceLane.cards.find(card => card.id === cardId);
-            let updatedSourceCards = [...sourceLane.cards];
-            let updatedTargetCards = [...targetLane.cards];
-    
-            if (sourceLane.id !== targetLane.id) {
-                updatedSourceCards.splice(sourceIndex, 1);
-                updatedTargetCards.push(cardToMove);
-            } else {
-                updatedSourceCards.splice(sourceIndex, 1);
-                updatedTargetCards.splice(e.dataTransfer.getData('index'), 0, cardToMove);
-            }
-    
-            try {
-                await updateDoc(doc(db, `boards/${effectiveBoardId}/lanes`, sourceLane.id), { cards: updatedSourceCards });
-                await updateDoc(doc(db, `boards/${effectiveBoardId}/lanes`, targetLane.id), { cards: updatedTargetCards });
-                console.log(`Moved card "${cardId}" from lane "${sourceLane.id}" to lane "${targetLane.id}"`);
-    
-                setLanes(lanes.map(lane => {
-                    if (lane.id === sourceLane.id) {
-                        return { ...lane, cards: updatedSourceCards };
-                    }
-                    if (lane.id === targetLane.id) {
-                        return { ...lane, cards: updatedTargetCards };
-                    }
-                    return lane;
-                }));
-            } catch (error) {
-                console.error('Error moving card:', error);
-            }
-        }
-    };
-    
-    
-    
 
     return (
         <div className="container-fluid">
@@ -212,7 +234,7 @@ const Board = () => {
                         onUpdateLaneTitle={handleUpdateLaneTitle}
                         onCreateCard={(title, description) => handleCreateCard(lane.id, title, description)}
                         onUpdateCard={handleUpdateCard}
-                        onDeleteCard={handleDeleteCard}
+                        onDeleteCard={(cardId) => handleDeleteCard(lane.id, cardId)}
                         onDeleteLane={() => handleDeleteLane(lane.id)}
                         onDragStart={handleDragStart}
                         onDragOver={handleDragOver}

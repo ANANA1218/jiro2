@@ -2,10 +2,9 @@ import React, { useState } from 'react';
 import Card from './Card';
 import './Column.css';
 
-const Column = ({ lane, onUpdateLaneTitle, onCreateCard, onUpdateCard, onDeleteCard, onDeleteLane, onDragStart, onDragOver, onDrop }) => {
+const Lane = ({ lane, onUpdateLaneTitle, onCreateCard, onUpdateCard, onDeleteCard, onDeleteLane, onDragStart, onDragOver, onDrop }) => {
     const [newCardTitle, setNewCardTitle] = useState('');
     const [newCardDescription, setNewCardDescription] = useState('');
-
 
     const handleCreateCard = () => {
         if (newCardTitle.trim() === '') {
@@ -17,6 +16,18 @@ const Column = ({ lane, onUpdateLaneTitle, onCreateCard, onUpdateCard, onDeleteC
         setNewCardTitle('');
         setNewCardDescription('');
     };
+
+    const handleDragOver = (e) => {
+        e.preventDefault();
+    };
+
+    const handleDrop = (e) => {
+        e.preventDefault();
+        const cardId = e.dataTransfer.getData('cardId');
+        const sourceLaneId = e.dataTransfer.getData('sourceLaneId');
+        onDrop(e, cardId, sourceLaneId, lane.id);
+    };
+    
 
     return (
         <div className="col-md-4">
@@ -52,8 +63,8 @@ const Column = ({ lane, onUpdateLaneTitle, onCreateCard, onUpdateCard, onDeleteC
                     </div>
                     <div
                         className="list-group"
-                        onDragOver={onDragOver}
-                        onDrop={(e) => onDrop(e, lane.id)}
+                        onDragOver={handleDragOver}
+                        onDrop={handleDrop}
                     >
                         {lane.cards.map(card => (
                             <Card
@@ -65,6 +76,16 @@ const Column = ({ lane, onUpdateLaneTitle, onCreateCard, onUpdateCard, onDeleteC
                                 onDragStart={onDragStart}
                             />
                         ))}
+                        {/* Placeholder for drop */}
+                        {lane.cards.length === 0 && (
+                            <div
+                                className="empty-lane"
+                                onDragOver={handleDragOver}
+                                onDrop={handleDrop}
+                            >
+                                Drop cards here
+                            </div>
+                        )}
                     </div>
                     <button
                         className="btn btn-danger btn-sm mt-3"
@@ -78,4 +99,4 @@ const Column = ({ lane, onUpdateLaneTitle, onCreateCard, onUpdateCard, onDeleteC
     );
 };
 
-export default Column;
+export default Lane;
