@@ -4,8 +4,7 @@ import { db } from './Firebase';
 import { collection, getDocs, updateDoc, doc,getDoc,addDoc, deleteDoc } from 'firebase/firestore';
 import Lane from './Column';
 
-<<<<<<< HEAD
-const TrelloBoard = () => {
+const Board = () => {
     const [lanes, setLanes] = useState([]);
     const [newLaneTitle, setNewLaneTitle] = useState('');
 
@@ -46,24 +45,6 @@ const TrelloBoard = () => {
         } catch (error) {
             console.error('Error creating lane:', error);
         }
-=======
-const Board = () => {
-  const [lanes, setLanes] = useState([]);
-  const [newLaneTitle, setNewLaneTitle] = useState('');
-
-  useEffect(() => {
-    const fetchLanes = async () => {
-      try {
-        const lanesSnapshot = await getDocs(collection(db, 'lanes'));
-        const lanesData = lanesSnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
-        setLanes(lanesData);
-      } catch (error) {
-        console.error('Error fetching lanes:', error);
-      }
->>>>>>> b6aaa51f67eca562d83d9106b26b535721812231
     };
 
     const handleUpdateLaneTitle = async (laneId, newTitle) => {

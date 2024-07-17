@@ -11,6 +11,7 @@ import ResetPassword from './components/Auth/Resetpassword';
 import NewBoard from './components/NewBoard';
 import Home from './components/Home';
 import TrelloBoard from './components/Board';
+import { CssBaseline, Container } from '@mui/material';
 
 function App() {
   return (
