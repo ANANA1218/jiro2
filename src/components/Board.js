@@ -149,9 +149,7 @@ const TrelloBoard = () => {
     e.dataTransfer.setData('cardId', cardId);
   };
 
-  const handleDragOver = (e) => {
-    e.preventDefault();
-  };
+  const handleDragOver = (e) => e.preventDefault();
 
   const handleDrop = async (e, targetLaneId) => {
     const cardId = e.dataTransfer.getData('cardId');
@@ -204,8 +202,8 @@ const TrelloBoard = () => {
             onDrop={handleDrop}
           />
         ))}
-      </div>
-    </div>
+      </Grid>
+    </Container>
   );
 };
 
