@@ -42,3 +42,4 @@ const Card = ({ card, onUpdateCard, onDeleteCard, onDragStart }) => {
 };
 
 export default Card;
+
