@@ -1,13 +1,53 @@
-/* Column.css */
-.column-card {
-  background-color: #f9f9f9;
-  padding: 10px;
-}
-
-.task-item {
-  padding: 5px;
-  margin: 5px 0;
-  background-color: #ffffff;
-  border-radius: 5px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
+/* src/components/Column.css */
+.column {
+    flex: 1 1 18%;
+    margin: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    background-color: #f7f7f7;
+  }
+  
+  .lane-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .lane-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+  }
+  
+  .lane-cards {
+    flex-grow: 1;
+  }
+  
+  .lane-footer button {
+    margin-right: 5px;
+  }
+  
+  .add-card-btn,
+  .delete-lane,
+  .edit-color {
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .add-card-btn .fa-plus,
+  .delete-lane .fa-trash,
+  .edit-color .fa-palette {
+    font-size: 20px;
+    color: #666;
+  }
+  
+  .add-card-btn:hover .fa-plus,
+  .delete-lane:hover .fa-trash,
+  .edit-color:hover .fa-palette {
+    color: #333;
+  }
+  

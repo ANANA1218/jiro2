@@ -1,13 +1,17 @@
+// src/components/Board.js
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Board.css';
-import { db } from './Firebase'; 
+import { db } from './Firebase';
 import { collection, getDocs, setDoc, doc, onSnapshot, deleteDoc, getDoc, updateDoc } from 'firebase/firestore';
-import Lane from './Column'; 
+import Lane from './Column';
+import { colors } from './colorOptions'; // Import the colors array
 
 const Board = () => {
   const [lanes, setLanes] = useState([]);
   const [newLaneTitle, setNewLaneTitle] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterPriority, setFilterPriority] = useState('All');
 
   useEffect(() => {
     const fetchLanes = async () => {
@@ -46,6 +50,7 @@ const Board = () => {
       const newLaneRef = doc(collection(db, 'lanes'));
       const newLane = {
         title: newLaneTitle,
+        color: colors[0],
         cards: []
       };
 
@@ -64,6 +69,16 @@ const Board = () => {
       console.log(`Updated lane "${laneId}" title to "${newTitle}" in Firestore`);
     } catch (error) {
       console.error('Error updating lane title:', error);
+    }
+  };
+
+  const handleUpdateLaneColor = async (laneId, newColor) => {
+    try {
+      const laneRef = doc(db, 'lanes', laneId);
+      await updateDoc(laneRef, { color: newColor });
+      console.log(`Updated lane "${laneId}" color to "${newColor}" in Firestore`);
+    } catch (error) {
+      console.error('Error updating lane color:', error);
     }
   };
 
@@ -88,8 +103,8 @@ const Board = () => {
           id: Date.now().toString(),
           title: cardTitle,
           description: cardDescription,
-          label: currentDate,
-          priority: cardPriority
+          priority: cardPriority,
+          label: currentDate
         };
 
         const updatedCards = [...laneDoc.data().cards, newCard];
@@ -101,7 +116,7 @@ const Board = () => {
     }
   };
 
-  const onUpdateCard = async (laneId, cardId, updatedTitle, updatedDescription, updatedLabel, updatedPriority) => {
+  const onUpdateCard = async (laneId, cardId, updatedTitle, updatedDescription, updatedLabel) => {
     try {
       const laneRef = doc(db, 'lanes', laneId);
       const laneDoc = await getDoc(laneRef);
@@ -113,8 +128,7 @@ const Board = () => {
               ...card,
               title: updatedTitle,
               description: updatedDescription,
-              label: updatedLabel,
-              priority: updatedPriority
+              label: updatedLabel
             };
           }
           return card;
@@ -173,6 +187,15 @@ const Board = () => {
     }
   };
 
+  const filteredLanes = lanes.map(lane => ({
+    ...lane,
+    cards: lane.cards.filter(card => {
+      const matchesPriority = filterPriority === 'All' || card.priority === filterPriority;
+      const matchesSearch = card.title.toLowerCase().includes(searchTerm.toLowerCase());
+      return matchesPriority && matchesSearch;
+    })
+  }));
+
   return (
     <div className="container-fluid">
       <div className="row">
@@ -188,9 +211,31 @@ const Board = () => {
             Add Lane
           </button>
         </div>
+        <div className="col-md-4">
+          <input
+            type="text"
+            className="form-control mb-2"
+            placeholder="Search cards"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+        <div className="col-md-4">
+          <select
+            className="form-control mb-2"
+            value={filterPriority}
+            onChange={(e) => setFilterPriority(e.target.value)}
+          >
+            <option value="All">All Priorities</option>
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+            <option value="Critical">Critical</option>
+          </select>
+        </div>
       </div>
       <div className="row mt-3">
-        {lanes.map(lane => (
+        {filteredLanes.map(lane => (
           <Lane
             key={lane.id}
             lane={lane}
@@ -202,6 +247,7 @@ const Board = () => {
             onDragStart={handleDragStart}
             onDragOver={handleDragOver}
             onDrop={handleDrop}
+            onUpdateLaneColor={handleUpdateLaneColor}
           />
         ))}
       </div>

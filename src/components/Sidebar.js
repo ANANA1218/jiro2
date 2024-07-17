@@ -1,8 +1,16 @@
 import React from 'react';
-import { Drawer, List, ListItem, ListItemText, Divider } from '@mui/material';
+import { Drawer, List, ListItem, ListItemText, Divider, Button } from '@mui/material';
 import './Sidebar.css';
+import { useNavigate } from 'react-router-dom';
 
 const Sidebar = ({ open, onClose }) => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    // Add your logout logic here
+    navigate('/login');
+  };
+
   return (
     <Drawer anchor="right" open={open} onClose={onClose}>
       <div className="sidebar">
@@ -16,7 +24,9 @@ const Sidebar = ({ open, onClose }) => {
           </ListItem>
           <Divider />
           <ListItem>
-            <ListItemText primary="Logout" />
+            <Button onClick={handleLogout} variant="contained" color="secondary" fullWidth>
+              Logout
+            </Button>
           </ListItem>
         </List>
       </div>
