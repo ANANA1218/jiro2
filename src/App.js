@@ -12,6 +12,7 @@ import NewBoard from './components/NewBoard';
 import Home from './components/Home';
 import TrelloBoard from './components/Board';
 import { CssBaseline, Container } from '@mui/material';
+import Profile from './components/Auth/Profile';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Container maxWidth="lg" style={{ paddingTop: '2rem' }}>
           <Routes>
            <Route path="/" element={<Home />} />
+           <Route path="/profile" element={<Profile />} />
            <Route path="/trello-board/:boardId" element={<TrelloBoard />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
