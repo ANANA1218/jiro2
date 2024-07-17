@@ -127,3 +127,20 @@ body {
   background-color: rgba(0, 0, 0, 0.8);
   color: #FFFFFF;
 }
+/* src/App.css */
+.App {
+  text-align: center;
+}
+
+.App-body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.navbar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

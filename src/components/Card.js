@@ -1,54 +1,44 @@
-import React, { useState } from 'react';
+// src/components/Card.js
+import React from 'react';
+import './Card.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash, faPencilAlt } from '@fortawesome/free-solid-svg-icons';
 
-const Card = ({ card, laneId, onUpdateCard, onDeleteCard, onDragStart }) => {
-    const [isEditing, setIsEditing] = useState(false);
-    const [updatedTitle, setUpdatedTitle] = useState(card.title);
-    const [updatedDescription, setUpdatedDescription] = useState(card.description);
-    const [updatedLabel, setUpdatedLabel] = useState(card.label);
+const Card = ({ card, onUpdateCard, onDeleteCard, onDragStart }) => {
+  const getPriorityClass = (priority) => {
+    switch (priority) {
+      case 'Low':
+        return 'card-low';
+      case 'Medium':
+        return 'card-medium';
+      case 'High':
+        return 'card-high';
+      case 'Critical':
+        return 'card-critical';
+      default:
+        return '';
+    }
+  };
 
-    const handleSave = () => {
-        onUpdateCard(laneId, card.id, updatedTitle, updatedDescription, updatedLabel);
-        setIsEditing(false);
-    };
-
-    return (
-        <div className="card mb-2" draggable onDragStart={(e) => onDragStart(e, card.id, laneId)}>
-            <div className="card-body">
-                {isEditing ? (
-                    <div>
-                        <input
-                            type="text"
-                            className="form-control mb-2"
-                            value={updatedTitle}
-                            onChange={(e) => setUpdatedTitle(e.target.value)}
-                        />
-                        <textarea
-                            className="form-control mb-2"
-                            value={updatedDescription}
-                            onChange={(e) => setUpdatedDescription(e.target.value)}
-                        />
-                        <input
-                            type="text"
-                            className="form-control mb-2"
-                            value={updatedLabel}
-                            onChange={(e) => setUpdatedLabel(e.target.value)}
-                        />
-                        <button className="btn btn-primary" onClick={handleSave}>Save</button>
-                    </div>
-                ) : (
-                    <div>
-                        <h5>{card.title}</h5>
-                        <p>{card.description}</p>
-                        <span className="badge badge-secondary">{card.label}</span>
-                        <div className="d-flex justify-content-end mt-2">
-                            <button className="btn btn-outline-secondary btn-sm me-2" onClick={() => setIsEditing(true)}>Edit</button>
-                            <button className="btn btn-outline-danger btn-sm" onClick={() => onDeleteCard(laneId, card.id)}>Delete</button>
-                        </div>
-                    </div>
-                )}
-            </div>
-        </div>
-    );
+  return (
+    <div
+      className={`card ${getPriorityClass(card.priority)}`}
+      draggable
+      onDragStart={(e) => onDragStart(e, card.id)}
+    >
+      <h4>{card.title}</h4>
+      <p>{card.description}</p>
+      <p>{card.label}</p>
+      <div className="card-footer">
+        <button onClick={() => onUpdateCard(card.id)} className="edit-card-btn">
+          <FontAwesomeIcon icon={faPencilAlt} />
+        </button>
+        <button onClick={() => onDeleteCard(card.id)} className="delete-card-btn">
+          <FontAwesomeIcon icon={faTrash} />
+        </button>
+      </div>
+    </div>
+  );
 };
 
 export default Card;

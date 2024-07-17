@@ -1,11 +1,47 @@
-/* Card.css */
-.list-group-item {
+/* src/components/Card.css */
+.card {
     padding: 10px;
-    margin: 10px 0;
-    background-color: #fff;
-    border: 1px solid #ccc;
+    margin-bottom: 10px;
     border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
   
+  .card-low {
+    background-color: #ccffcc;
+  }
   
-
+  .card-medium {
+    background-color: #ffffcc;
+  }
+  
+  .card-high {
+    background-color: #ffcc99;
+  }
+  
+  .card-critical {
+    background-color: #ff6666;
+  }
+  
+  .card-footer {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .edit-card-btn,
+  .delete-card-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .edit-card-btn .fa-pencil-alt,
+  .delete-card-btn .fa-trash {
+    font-size: 16px;
+    color: #666;
+  }
+  
+  .edit-card-btn:hover .fa-pencil-alt,
+  .delete-card-btn:hover .fa-trash {
+    color: #333;
+  }
+  

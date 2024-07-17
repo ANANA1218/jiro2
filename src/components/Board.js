@@ -1,15 +1,17 @@
+// src/components/Board.js
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './Board.css';
 import { db } from './Firebase';
-import { collection, getDocs, updateDoc, doc, getDoc, addDoc, deleteDoc } from 'firebase/firestore';
+import { collection, getDocs, setDoc, doc, onSnapshot, deleteDoc, getDoc, updateDoc } from 'firebase/firestore';
 import Lane from './Column';
+import { colors } from './colorOptions'; // Import the colors array
 
 const Board = () => {
-    const [lanes, setLanes] = useState([]);
-    const [newLaneTitle, setNewLaneTitle] = useState('');
-
-    const params = useParams();
-    const effectiveBoardId = params.boardId;
+  const [lanes, setLanes] = useState([]);
+  const [newLaneTitle, setNewLaneTitle] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterPriority, setFilterPriority] = useState('All');
 
     useEffect(() => {
         const fetchLanes = async () => {
@@ -33,46 +35,66 @@ const Board = () => {
             return;
         }
 
-        try {
-            const newLaneRef = await addDoc(collection(db, `boards/${effectiveBoardId}/lanes`), {
-                title: newLaneTitle,
-                cards: []
-            });
-            const newLane = { id: newLaneRef.id, title: newLaneTitle, cards: [] };
-            setLanes([...lanes, newLane]);
-            console.log(`Created new lane "${newLaneTitle}" in Firestore with ID: ${newLaneRef.id}`);
-            setNewLaneTitle('');
-        } catch (error) {
-            console.error('Error creating lane:', error);
-        }
-    };
+    try {
+      const newLaneRef = doc(collection(db, 'lanes'));
+      const newLane = {
+        title: newLaneTitle,
+        color: colors[0],
+        cards: []
+      };
 
-    const handleUpdateLaneTitle = async (laneId, newTitle) => {
-        try {
-            const laneRef = doc(db, `boards/${effectiveBoardId}/lanes`, laneId);
-            await updateDoc(laneRef, { title: newTitle });
-            setLanes(lanes.map(lane => (lane.id === laneId ? { ...lane, title: newTitle } : lane)));
-            console.log(`Updated lane "${laneId}" title to "${newTitle}" in Firestore`);
-        } catch (error) {
-            console.error('Error updating lane title:', error);
-        }
-    };
+      await setDoc(newLaneRef, newLane);
+      console.log(`Created new lane "${newLaneTitle}" in Firestore`);
+      setNewLaneTitle('');
+    } catch (error) {
+      console.error('Error creating lane:', error);
+    }
+  };
 
-   
+  const handleUpdateLaneTitle = async (laneId, newTitle) => {
+    try {
+      const laneRef = doc(db, 'lanes', laneId);
+      await updateDoc(laneRef, { title: newTitle });
+      console.log(`Updated lane "${laneId}" title to "${newTitle}" in Firestore`);
+    } catch (error) {
+      console.error('Error updating lane title:', error);
+    }
+  };
 
-    const handleCreateCard = async (laneId, cardTitle, cardDescription) => {
-        try {
-            const laneRef = doc(db, `boards/${effectiveBoardId}/lanes`, laneId);
-            const laneDoc = await getDoc(laneRef);
+  const handleUpdateLaneColor = async (laneId, newColor) => {
+    try {
+      const laneRef = doc(db, 'lanes', laneId);
+      await updateDoc(laneRef, { color: newColor });
+      console.log(`Updated lane "${laneId}" color to "${newColor}" in Firestore`);
+    } catch (error) {
+      console.error('Error updating lane color:', error);
+    }
+  };
 
-            if (laneDoc.exists()) {
-                const currentDate = new Date().toISOString().split('T')[0];
-                const newCard = {
-                    id: Date.now().toString(),
-                    title: cardTitle,
-                    description: cardDescription,
-                    label: currentDate
-                };
+  const handleDeleteLane = async (laneId) => {
+    try {
+      const laneRef = doc(db, 'lanes', laneId);
+      await deleteDoc(laneRef);
+      console.log(`Deleted lane "${laneId}" from Firestore`);
+    } catch (error) {
+      console.error('Error deleting lane:', error);
+    }
+  };
+
+  const onCreateCard = async (laneId, cardTitle, cardDescription, cardPriority) => {
+    try {
+      const laneRef = doc(db, 'lanes', laneId);
+      const laneDoc = await getDoc(laneRef);
+
+      if (laneDoc.exists()) {
+        const currentDate = new Date().toISOString().split('T')[0];
+        const newCard = {
+          id: Date.now().toString(),
+          title: cardTitle,
+          description: cardDescription,
+          priority: cardPriority,
+          label: currentDate
+        };
 
                 const updatedCards = [...laneDoc.data().cards, newCard];
                 await updateDoc(laneRef, { cards: updatedCards });
@@ -178,9 +200,7 @@ const Board = () => {
         e.dataTransfer.setData('sourceLaneId', sourceLaneId);
     };
 
-    const handleDragOver = (e) => {
-        e.preventDefault();
-    };
+  const handleDragOver = (e) => e.preventDefault();
 
     const handleDrop = async (e, cardId, sourceLaneId, targetLaneId) => {
         e.preventDefault();
@@ -192,59 +212,82 @@ const Board = () => {
             const updatedSourceCards = sourceLane.cards.filter(card => card.id !== cardId);
             const updatedTargetCards = [...targetLane.cards, cardToMove];
 
-            try {
-                await updateDoc(doc(db, `boards/${effectiveBoardId}/lanes`, sourceLaneId), { cards: updatedSourceCards });
-                await updateDoc(doc(db, `boards/${effectiveBoardId}/lanes`, targetLaneId), { cards: updatedTargetCards });
-                console.log(`Moved card "${cardId}" from lane "${sourceLaneId}" to lane "${targetLaneId}"`);
-                setLanes(lanes.map(lane => {
-                    if (lane.id === sourceLaneId) {
-                        return { ...lane, cards: updatedSourceCards };
-                    }
-                    if (lane.id === targetLaneId) {
-                        return { ...lane, cards: updatedTargetCards };
-                    }
-                    return lane;
-                }));
-            } catch (error) {
-                console.error('Error moving card:', error);
-            }
-        }
-    };
+      try {
+        await updateDoc(doc(db, 'lanes', sourceLane.id), { cards: updatedSourceCards });
+        await updateDoc(doc(db, 'lanes', targetLane.id), { cards: updatedTargetCards });
+        console.log(`Moved card "${cardId}" from lane "${sourceLane.id}" to lane "${targetLane.id}"`);
+      } catch (error) {
+        console.error('Error moving card:', error);
+      }
+    }
+  };
 
-    return (
-        <div className="container-fluid">
-            <div className="row">
-                <div className="col-md-4">
-                    <input
-                        type="text"
-                        className="form-control mb-2"
-                        placeholder="New Lane Title"
-                        value={newLaneTitle}
-                        onChange={(e) => setNewLaneTitle(e.target.value)}
-                    />
-                    <button className="btn btn-outline-primary" onClick={handleCreateLane}>
-                        Add Lane
-                    </button>
-                </div>
-            </div>
-            <div className="row mt-3">
-                {lanes.map(lane => (
-                    <Lane
-                        key={lane.id}
-                        lane={lane}
-                        onUpdateLaneTitle={handleUpdateLaneTitle}
-                        onCreateCard={(title, description) => handleCreateCard(lane.id, title, description)}
-                        onUpdateCard={handleUpdateCard}
-                        onDeleteCard={handleDeleteCard}
-                        onDeleteLane={() => handleDeleteLane(lane.id)}
-                        onDragStart={handleDragStart}
-                        onDragOver={handleDragOver}
-                        onDrop={handleDrop}
-                    />
-                ))}
-            </div>
+  const filteredLanes = lanes.map(lane => ({
+    ...lane,
+    cards: lane.cards.filter(card => {
+      const matchesPriority = filterPriority === 'All' || card.priority === filterPriority;
+      const matchesSearch = card.title.toLowerCase().includes(searchTerm.toLowerCase());
+      return matchesPriority && matchesSearch;
+    })
+  }));
+
+  return (
+    <div className="container-fluid">
+      <div className="row">
+        <div className="col-md-4">
+          <input
+            type="text"
+            className="form-control mb-2"
+            placeholder="New lane title"
+            value={newLaneTitle}
+            onChange={(e) => setNewLaneTitle(e.target.value)}
+          />
+          <button className="btn btn-primary" onClick={handleCreateLane}>
+            Add Lane
+          </button>
         </div>
-    );
+        <div className="col-md-4">
+          <input
+            type="text"
+            className="form-control mb-2"
+            placeholder="Search cards"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+        <div className="col-md-4">
+          <select
+            className="form-control mb-2"
+            value={filterPriority}
+            onChange={(e) => setFilterPriority(e.target.value)}
+          >
+            <option value="All">All Priorities</option>
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+            <option value="Critical">Critical</option>
+          </select>
+        </div>
+      </div>
+      <div className="row mt-3">
+        {filteredLanes.map(lane => (
+          <Lane
+            key={lane.id}
+            lane={lane}
+            onUpdateLaneTitle={handleUpdateLaneTitle}
+            onCreateCard={onCreateCard}
+            onUpdateCard={onUpdateCard}
+            onDeleteCard={onDeleteCard}
+            onDeleteLane={handleDeleteLane}
+            onDragStart={handleDragStart}
+            onDragOver={handleDragOver}
+            onDrop={handleDrop}
+            onUpdateLaneColor={handleUpdateLaneColor}
+          />
+        ))}
+      </div>
+    </div>
+  );
 };
 
 export default Board;
