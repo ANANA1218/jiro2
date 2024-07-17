@@ -8,6 +8,8 @@ import Footer from './components/Footer';
 import Login from './components/Auth/Login';
 import Signup from './components/Auth/Signup';
 import ResetPassword from './components/Auth/Resetpassword';
+import NewBoard from './components/NewBoard';
+import Home from './components/Home';
 
 function App() {
   return (
@@ -16,10 +18,12 @@ function App() {
         <Navbar />
         <main className="container mt-5">
           <Routes>
-            <Route path="/" element={<Board />} />
+           <Route path="/" element={<Home />} />
+            <Route path="/test" element={<Board />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/new-board" element={<NewBoard />} />
           </Routes>
         </main>
         <Footer />
