@@ -1,13 +1,17 @@
-/* Column.css */
-.column-card {
-  background-color: #f9f9f9;
-  padding: 10px;
+.lane {
+  background-color: #f0f0f0;
+  padding: 15px;
+  border-radius: 8px;
+  margin-right: 10px;
 }
 
-.task-item {
-  padding: 5px;
-  margin: 5px 0;
-  background-color: #ffffff;
-  border-radius: 5px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+.lane-title-input {
+  border: none;
+  background: transparent;
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.lane .card-body {
+  min-height: 200px;
 }
