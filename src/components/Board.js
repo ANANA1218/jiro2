@@ -184,13 +184,7 @@ const Board = () => {
         }
     };
     
-    const handleDrop = (e) => {
-        e.preventDefault();
-        const cardId = e.dataTransfer.getData('cardId');
-        const sourceLaneId = e.dataTransfer.getData('sourceLaneId');
-        onDrop(e, cardId, sourceLaneId, lane.id);
-    };
-    
+
     
     
      // Function to delete a card
