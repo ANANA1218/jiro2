@@ -3,7 +3,24 @@
     background-color: #FFFFD1 !important;
   }
   
-  .navbar .MuiTypography-root, .navbar .MuiButton-root, .navbar .MuiIconButton-root {
+  .toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 0 10px; /* Adjust the padding as needed */
+  }
+  
+  .navbar-logo {
+    height: 80px; /* Adjust the height to make it three times larger */
+  }
+  
+  .navbar-links {
+    display: flex;
+    gap: 20px; /* Space between the links */
+  }
+  
+  .navbar .MuiButton-root, .navbar .MuiIconButton-root {
     color: #333333 !important;
   }
   

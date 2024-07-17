@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Link } from 'react-router-dom';
 import Sidebar from './Sidebar'; // Import Sidebar
+import logo from '../assets/Logo Pastel transparent.png'; // Import the logo
 import './Navbar.css';
 
 const Navbar = () => {
@@ -23,13 +23,13 @@ const Navbar = () => {
   return (
     <>
       <AppBar position="static" className="navbar">
-        <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            JIRO
-          </Typography>
-          <Button color="inherit" component={Link} to="/">Home</Button>
-          <Button color="inherit" component={Link} to="/login">Login</Button>
-          <Button color="inherit" component={Link} to="/signup">Signup</Button>
+        <Toolbar className="toolbar">
+          <img src={logo} alt="JIRO Logo" className="navbar-logo" />
+          <div className="navbar-links">
+            <Button color="inherit" component={Link} to="/">Home</Button>
+            <Button color="inherit" component={Link} to="/login">Login</Button>
+            <Button color="inherit" component={Link} to="/signup">Signup</Button>
+          </div>
           <IconButton edge="end" color="inherit" onClick={handleSidebarOpen}>
             <MenuIcon />
           </IconButton>
