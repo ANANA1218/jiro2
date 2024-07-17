@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import Card from './Card';  // Assurez-vous d'importer correctement le composant Card
+import Card from './Card';
+import './Column.css';
 
 const Lane = ({ lane, onUpdateLaneTitle, onCreateCard, onUpdateCard, onDeleteCard, onDeleteLane, onDragStart, onDragOver, onDrop }) => {
   const [newCardTitle, setNewCardTitle] = useState('');

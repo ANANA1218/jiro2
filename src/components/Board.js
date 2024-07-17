@@ -83,11 +83,12 @@ const TrelloBoard = () => {
       const laneDoc = await getDoc(laneRef);
 
       if (laneDoc.exists()) {
+        const currentDate = new Date().toISOString().split('T')[0];
         const newCard = {
           id: Date.now().toString(),
           title: cardTitle,
           description: cardDescription,
-          label: ''
+          label: currentDate
         };
 
         const updatedCards = [...laneDoc.data().cards, newCard];

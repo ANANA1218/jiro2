@@ -1,11 +1,11 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useState } from 'react';
+import './Card.css';
 
 const Card = ({ card, laneId, onUpdateCard, onDeleteCard, onDragStart }) => {
   const [editMode, setEditMode] = useState(false);
   const [editCardTitle, setEditCardTitle] = useState(card.title);
   const [editCardDescription, setEditCardDescription] = useState(card.description);
-  const [editCardLabel, setEditCardLabel] = useState(card.label);
 
   const handleUpdateCard = () => {
     if (editCardTitle.trim() === '') {
@@ -13,7 +13,8 @@ const Card = ({ card, laneId, onUpdateCard, onDeleteCard, onDragStart }) => {
       return;
     }
 
-    onUpdateCard(laneId, card.id, editCardTitle, editCardDescription, editCardLabel);
+    const currentDate = new Date().toISOString().split('T')[0];
+    onUpdateCard(laneId, card.id, editCardTitle, editCardDescription, currentDate);
     setEditMode(false);
   };
 
@@ -31,12 +32,6 @@ const Card = ({ card, laneId, onUpdateCard, onDeleteCard, onDragStart }) => {
             className="form-control mb-1"
             value={editCardDescription}
             onChange={(e) => setEditCardDescription(e.target.value)}
-          />
-          <input
-            type="text"
-            className="form-control mb-1"
-            value={editCardLabel}
-            onChange={(e) => setEditCardLabel(e.target.value)}
           />
           <button className="btn btn-primary btn-sm me-2" onClick={handleUpdateCard}>
             Save
