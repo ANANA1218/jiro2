@@ -1,37 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { db, auth } from './Firebase';
-import { collection, addDoc, getDocs, updateDoc, doc, deleteDoc,getDoc } from 'firebase/firestore';
+import { db } from './Firebase';
+import { collection, getDocs, updateDoc, doc,getDoc,addDoc, deleteDoc } from 'firebase/firestore';
 import Lane from './Column';
 
 const TrelloBoard = () => {
     const [lanes, setLanes] = useState([]);
     const [newLaneTitle, setNewLaneTitle] = useState('');
-    const [newCardTitle, setNewCardTitle] = useState('');
-    const [newCardDescription, setNewCardDescription] = useState('');
-    const [boards, setBoards] = useState([]);
 
-    const params = useParams(); // React Router's useParams hook
-    const effectiveBoardId = params.boardId; // Assuming boardId is from URL params
+    const params = useParams();
+    const effectiveBoardId = params.boardId;
 
-    // Fetching boards that belong to the current user
-    useEffect(() => {
-        const fetchBoards = async () => {
-            try {
-                const boardsSnapshot = await getDocs(collection(db, 'boards'));
-                const userBoards = boardsSnapshot.docs
-                    .map(doc => ({ id: doc.id, ...doc.data() }))
-                    .filter(board => board.createdBy === auth.currentUser.uid);
-                setBoards(userBoards);
-            } catch (error) {
-                console.error('Error fetching boards:', error);
-            }
-        };
-
-        fetchBoards();
-    }, []);
-
-    // Fetching lanes for the selected board
     useEffect(() => {
         const fetchLanes = async () => {
             if (effectiveBoardId) {
@@ -48,7 +27,6 @@ const TrelloBoard = () => {
         fetchLanes();
     }, [effectiveBoardId]);
 
-    // Function to create a new lane
     const handleCreateLane = async () => {
         if (newLaneTitle.trim() === '') {
             alert('Lane title cannot be empty!');
@@ -69,7 +47,6 @@ const TrelloBoard = () => {
         }
     };
 
-    // Function to handle updating lane title
     const handleUpdateLaneTitle = async (laneId, newTitle) => {
         try {
             const laneRef = doc(db, `boards/${effectiveBoardId}/lanes`, laneId);
@@ -81,7 +58,6 @@ const TrelloBoard = () => {
         }
     };
 
-    // Function to delete a lane
     const handleDeleteLane = async (laneId) => {
         try {
             const laneRef = doc(db, `boards/${effectiveBoardId}/lanes`, laneId);
@@ -93,7 +69,6 @@ const TrelloBoard = () => {
         }
     };
 
-    // Function to create a new card
     const handleCreateCard = async (laneId, cardTitle, cardDescription) => {
         try {
             const laneRef = doc(db, `boards/${effectiveBoardId}/lanes`, laneId);
@@ -118,7 +93,6 @@ const TrelloBoard = () => {
         }
     };
 
-    // Function to update a card
     const handleUpdateCard = async (laneId, cardId, updatedTitle, updatedDescription, updatedLabel) => {
         try {
             const laneRef = doc(db, `boards/${effectiveBoardId}/lanes`, laneId);
@@ -146,7 +120,6 @@ const TrelloBoard = () => {
         }
     };
 
-    // Function to delete a card
     const handleDeleteCard = async (laneId, cardId) => {
         try {
             const laneRef = doc(db, `boards/${effectiveBoardId}/lanes`, laneId);
@@ -163,7 +136,6 @@ const TrelloBoard = () => {
         }
     };
 
-    // Drag and drop functionality
     const handleDragStart = (e, cardId) => {
         e.dataTransfer.setData('cardId', cardId);
     };
@@ -171,26 +143,50 @@ const TrelloBoard = () => {
     const handleDragOver = (e) => {
         e.preventDefault();
     };
-
     const handleDrop = async (e, targetLaneId) => {
+        e.preventDefault();
         const cardId = e.dataTransfer.getData('cardId');
-        const sourceLane = lanes.find(lane => lane.cards.some(card => card.id === cardId));
+        const sourceLaneId = e.dataTransfer.getData('sourceLaneId');
+        const sourceIndex = e.dataTransfer.getData('index');
+    
+        const sourceLane = lanes.find(lane => lane.id === sourceLaneId);
         const targetLane = lanes.find(lane => lane.id === targetLaneId);
-
-        if (sourceLane && targetLane && sourceLane.id !== targetLane.id) {
+    
+        if (sourceLane && targetLane) {
             const cardToMove = sourceLane.cards.find(card => card.id === cardId);
-            const updatedSourceCards = sourceLane.cards.filter(card => card.id !== cardId);
-            const updatedTargetCards = [...targetLane.cards, cardToMove];
-
+            let updatedSourceCards = [...sourceLane.cards];
+            let updatedTargetCards = [...targetLane.cards];
+    
+            if (sourceLane.id !== targetLane.id) {
+                updatedSourceCards.splice(sourceIndex, 1);
+                updatedTargetCards.push(cardToMove);
+            } else {
+                updatedSourceCards.splice(sourceIndex, 1);
+                updatedTargetCards.splice(e.dataTransfer.getData('index'), 0, cardToMove);
+            }
+    
             try {
                 await updateDoc(doc(db, `boards/${effectiveBoardId}/lanes`, sourceLane.id), { cards: updatedSourceCards });
                 await updateDoc(doc(db, `boards/${effectiveBoardId}/lanes`, targetLane.id), { cards: updatedTargetCards });
                 console.log(`Moved card "${cardId}" from lane "${sourceLane.id}" to lane "${targetLane.id}"`);
+    
+                setLanes(lanes.map(lane => {
+                    if (lane.id === sourceLane.id) {
+                        return { ...lane, cards: updatedSourceCards };
+                    }
+                    if (lane.id === targetLane.id) {
+                        return { ...lane, cards: updatedTargetCards };
+                    }
+                    return lane;
+                }));
             } catch (error) {
                 console.error('Error moving card:', error);
             }
         }
     };
+    
+    
+    
 
     return (
         <div className="container-fluid">
