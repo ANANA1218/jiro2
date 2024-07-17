@@ -15,9 +15,10 @@ import TrelloBoard from './components/Board';
 function App() {
   return (
     <Router>
+      <CssBaseline />
       <div className="App">
         <Navbar />
-        <main className="container mt-5">
+        <Container maxWidth="lg" style={{ paddingTop: '2rem' }}>
           <Routes>
            <Route path="/" element={<Home />} />
            <Route path="/trello-board/:boardId" element={<TrelloBoard />} />
@@ -26,7 +27,7 @@ function App() {
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/new-board" element={<NewBoard />} />
           </Routes>
-        </main>
+        </Container>
         <Footer />
       </div>
     </Router>

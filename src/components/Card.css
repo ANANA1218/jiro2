@@ -1,5 +1,6 @@
 /* Card.css */
 .list-group-item {
+<<<<<<< HEAD
     padding: 10px;
     margin: 10px 0;
     background-color: #fff;
@@ -8,3 +9,11 @@
   }
   
   
+=======
+  padding: 10px;
+  margin: 10px 0;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+>>>>>>> b6aaa51f67eca562d83d9106b26b535721812231
