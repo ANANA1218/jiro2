@@ -1,8 +1,18 @@
-/* Card.css */
 .list-group-item {
-  padding: 10px;
-  margin: 10px 0;
-  background-color: #fff;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
+    background-color: white;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+  }
+  
+  .card-actions button {
+    margin-right: 10px;
+  }
+  
+  .card-actions .btn-link {
+    color: #007bff;
+  }
+  
+  .card-actions .btn-link.text-danger {
+    color: #dc3545;
+  }
+  

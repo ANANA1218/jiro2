@@ -77,7 +77,7 @@ const Board = () => {
     }
   };
 
-  const onCreateCard = async (laneId, cardTitle, cardDescription) => {
+  const onCreateCard = async (laneId, cardTitle, cardDescription, cardPriority) => {
     try {
       const laneRef = doc(db, 'lanes', laneId);
       const laneDoc = await getDoc(laneRef);
@@ -88,7 +88,8 @@ const Board = () => {
           id: Date.now().toString(),
           title: cardTitle,
           description: cardDescription,
-          label: currentDate
+          label: currentDate,
+          priority: cardPriority
         };
 
         const updatedCards = [...laneDoc.data().cards, newCard];
@@ -100,7 +101,7 @@ const Board = () => {
     }
   };
 
-  const onUpdateCard = async (laneId, cardId, updatedTitle, updatedDescription, updatedLabel) => {
+  const onUpdateCard = async (laneId, cardId, updatedTitle, updatedDescription, updatedLabel, updatedPriority) => {
     try {
       const laneRef = doc(db, 'lanes', laneId);
       const laneDoc = await getDoc(laneRef);
@@ -112,7 +113,8 @@ const Board = () => {
               ...card,
               title: updatedTitle,
               description: updatedDescription,
-              label: updatedLabel
+              label: updatedLabel,
+              priority: updatedPriority
             };
           }
           return card;
@@ -202,8 +204,8 @@ const Board = () => {
             onDrop={handleDrop}
           />
         ))}
-      </Grid>
-    </Container>
+      </div>
+    </div>
   );
 };
 
