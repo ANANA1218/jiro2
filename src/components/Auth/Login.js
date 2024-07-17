@@ -4,19 +4,17 @@ import {  signInWithEmailAndPassword   } from 'firebase/auth';
 import { auth } from './Firebase.js';
 import { NavLink, useNavigate } from 'react-router-dom'
  
-=======
+
 import React, { useState } from 'react';
 import { NavLink,useNavigate, Link } from 'react-router-dom';
 import { auth } from '../Firebase'; // Corriger le chemin d'importation
 import {  signInWithEmailAndPassword   } from 'firebase/auth';
 import './Login.css';
 
->>>>>>> c1d7f06ac55ca1331fb1dd5bb6d088ac1c7e8c71
 const Login = () => {
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-<<<<<<< HEAD
        
     const onLogin = (e) => {
         e.preventDefault();
@@ -56,7 +54,7 @@ const Login = () => {
                                     onChange={(e)=>setEmail(e.target.value)}
                                 />
                             </div>
-=======
+
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
