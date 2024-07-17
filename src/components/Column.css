@@ -3,13 +3,15 @@
     background-color: #F0F4F8;
     padding: 10px;
     margin: 10px 0;
-  }
-  
-  .card-item {
+    flex: 1; /* Pour que chaque colonne prenne une part égale de l'espace disponible */
+    min-width: 250px; /* Pour éviter que les colonnes deviennent trop petites */
+}
+
+.card-item {
     margin: 10px 0;
     background-color: #FFFFFF;
     border: 1px solid #CCCCCC;
     border-radius: 5px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  }
-  
+    padding: 15px; /* Pour plus d'espace autour du contenu */
+}
