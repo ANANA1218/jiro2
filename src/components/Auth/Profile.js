@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from '../Firebase'; // Assurez-vous d'importer db depuis votre configuration Firebase
 import { Link } from 'react-router-dom';
+import { collection, getDocs, query, where } from "firebase/firestore"; // Import Firestore methods
 
 const Profile = () => {
     const [user, setUser] = useState(null);
@@ -15,7 +16,9 @@ const Profile = () => {
 
                 // Récupérer les boards de l'utilisateur
                 try {
-                    const boardsSnapshot = await db.collection('boards').where('createdBy', 'array-contains', userAuth.uid).get();
+                    const boardsCollection = collection(db, 'boards');
+                    const q = query(boardsCollection, where('createdBy', '==', userAuth.uid));
+                    const boardsSnapshot = await getDocs(q);
                     const userBoardsData = boardsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                     setUserBoards(userBoardsData);
                 } catch (error) {
@@ -32,7 +35,7 @@ const Profile = () => {
     }, []);
 
     if (!user) {
-        return <div>Loading...</div>; // Afficher un message de chargement tant que l'authentification est en cours
+        return <div>Loading...</div>; 
     }
 
     return (
@@ -45,14 +48,12 @@ const Profile = () => {
             <ul>
                 {userBoards.map(board => (
                     <li key={board.id}>
-                        <Link to={`/boards/${board.id}`}>{board.name}</Link>
+                        <Link to={`/trello-board/${board.id}`}>{board.name}</Link>
                     </li>
                 ))}
             </ul>
 
-            <Link to="/edit-profile">
-                <button>Edit Profile</button>
-            </Link>
+            
         </section>
     );
 }

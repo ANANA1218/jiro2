@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Board.css';
-import { db, getUsers } from './Firebase';
-import { collection, getDocs, setDoc, doc, onSnapshot, deleteDoc, getDoc, updateDoc } from 'firebase/firestore';
-import Column from './Column'; // Assurez-vous que le chemin est correct
-import { colors } from './colorOptions';
+import { useParams } from 'react-router-dom';
+import { db } from './Firebase';
+import { collection, getDocs, updateDoc, doc,getDoc,addDoc, deleteDoc } from 'firebase/firestore';
+import Lane from './Column';
 
 const Board = () => {
   const [lanes, setLanes] = useState([]);
