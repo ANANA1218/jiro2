@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from '../Firebase'; // Assurez-vous d'importer db depuis votre configuration Firebase
 import { Link } from 'react-router-dom';
-import { collection, getDocs, query, where } from "firebase/firestore"; // Import Firestore methods
+import { collection, getDocs, query, where, deleteDoc, doc } from "firebase/firestore"; // Import Firestore methods
 
 const Profile = () => {
     const [user, setUser] = useState(null);
@@ -34,6 +34,18 @@ const Profile = () => {
         return () => unsubscribe();
     }, []);
 
+    const handleDeleteBoard = async (boardId) => {
+        try {
+            // Delete board from Firestore
+            await deleteDoc(doc(db, 'boards', boardId));
+            // Remove the board from the userBoards state
+            setUserBoards(userBoards.filter(board => board.id !== boardId));
+            console.log(`Board ${boardId} deleted successfully.`);
+        } catch (error) {
+            console.error('Error deleting board:', error);
+        }
+    };
+
     if (!user) {
         return <div>Loading...</div>; 
     }
@@ -49,11 +61,10 @@ const Profile = () => {
                 {userBoards.map(board => (
                     <li key={board.id}>
                         <Link to={`/trello-board/${board.id}`}>{board.name}</Link>
+                        <button onClick={() => handleDeleteBoard(board.id)}>Delete</button>
                     </li>
                 ))}
             </ul>
-
-            
         </section>
     );
 }

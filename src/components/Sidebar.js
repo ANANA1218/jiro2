@@ -11,15 +11,20 @@ const Sidebar = ({ open, onClose }) => {
     navigate('/login');
   };
 
+  const handleUserProfile = () => {
+    navigate('/profile'); // Navigate to user profile page
+    onClose(); // Close the sidebar after navigation
+  };
+
   return (
     <Drawer anchor="right" open={open} onClose={onClose}>
       <div className="sidebar">
         <List>
-          <ListItem>
+          <ListItem button onClick={handleUserProfile}>
             <ListItemText primary="User Profile" />
           </ListItem>
           <Divider />
-          <ListItem>
+          <ListItem button>
             <ListItemText primary="Settings" />
           </ListItem>
           <Divider />
