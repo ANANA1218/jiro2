@@ -9,3 +9,17 @@
   width: 100%;
   text-align: center;
 }
+
+/* Footer Styles */
+.footer {
+    padding: 20px;
+    text-align: center;
+    background-color: #f8f9fa;
+  }
+  
+  @media (max-width: 768px) {
+    .footer {
+      padding: 10px;
+    }
+  }
+  

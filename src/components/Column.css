@@ -1,53 +1,108 @@
-/* src/components/Column.css */
+/* Column Styles */
 .column {
-    flex: 1 1 18%;
-    margin: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  margin: 10px;
+  width: 100%;
+  max-width: 280px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  overflow-x: auto; /* Ajouter une barre de défilement horizontale */
+}
+
+.lane-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lane-title {
+  flex-grow: 1;
+}
+
+.edit-color {
+  margin-left: 10px;
+}
+
+.color-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.color-option {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+/* Column Styles */
+.column {
     padding: 10px;
     border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    background-color: #f7f7f7;
+    margin: 10px;
+    width: 100%;
+    max-width: 280px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    overflow-x: auto; /* Ajouter une barre de défilement horizontale */
   }
   
   .lane-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
   }
-  
-  .lane-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 10px;
-  }
-  
-  .lane-cards {
-    flex-grow: 1;
-  }
-  
-  .lane-footer button {
-    margin-right: 5px;
-  }
-  
-  .add-card-btn,
-  .delete-lane,
-  .edit-color {
+
+  .icon-button {
     background: none;
     border: none;
     cursor: pointer;
+    padding: 0;
   }
   
-  .add-card-btn .fa-plus,
-  .delete-lane .fa-trash,
-  .edit-color .fa-palette {
-    font-size: 20px;
-    color: #666;
+  .icon-button i {
+    font-size: 1.5em;
   }
   
-  .add-card-btn:hover .fa-plus,
-  .delete-lane:hover .fa-trash,
-  .edit-color:hover .fa-palette {
-    color: #333;
+  /* Couleurs spécifiques aux icônes */
+  .icon-add {
+    color: #4CAF50; /* Vert pastel */
   }
   
+  .icon-edit {
+    color: #FFC107; /* Jaune pastel */
+  }
+  
+  .icon-delete {
+    color: #F44336; /* Rouge pastel */
+  }
+  .lane-header .edit-color,
+.lane-footer .delete-lane,
+.add-card-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.lane-header .edit-color:hover,
+.lane-footer .delete-lane:hover,
+.add-card-btn:hover {
+  color: #007bff;
+}
+.lane-header .edit-color,
+.lane-footer .delete-lane,
+.add-card-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+}
+
+.lane-header .edit-color:hover,
+.lane-footer .delete-lane:hover,
+.add-card-btn:hover {
+  color: #007bff;
+}
