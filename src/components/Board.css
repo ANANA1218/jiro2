@@ -1,24 +1,43 @@
-/* Board Styles */
+/* Board.css */
 .board-container {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .board-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    background-color: #f8f9fa;
-    border-bottom: 1px solid #dee2e6;
-  }
-  
-  .board {
-    display: flex;
-    flex-wrap: nowrap; /* Modifier pour éviter les retours à la ligne */
-    gap: 10px;
-    overflow-x: auto; /* Ajouter une barre de défilement horizontale */
-    padding: 10px;
-    margin-top: 10px; /* Ajouter un peu d'espace en haut pour séparer de l'en-tête */
-  }
-  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 20px;
+}
+
+.board-header {
+  display: flex;
+  justify-content: space-between;
+  width: 80%;
+  margin-bottom: 20px;
+  background: none; /* Remove background */
+}
+
+.board-header .form-group {
+  flex: 1;
+  margin: 0 10px;
+}
+
+.board {
+  display: flex;
+  overflow-x: auto;
+  width: 100%;
+  padding: 10px;
+}
+
+.lane {
+  min-width: 300px;
+  background-color: #ffeef2; /* light pastel pink */
+  margin: 0 10px;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.card {
+  background-color: #f9f7f7;
+  border: 1px solid #e0e0e0;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+}

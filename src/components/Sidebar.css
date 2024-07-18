@@ -1,25 +1,41 @@
+/* Sidebar.css */
+
 .sidebar {
-    width: 250px;
-    padding: 10px;
-  }
-  /* Sidebar Styles */
+  width: 250px;
+  padding: 10px;
+}
+
+/* Sidebar Styles */
 .sidebar {
-    display: flex;
-    flex-direction: column;
-    padding: 10px;
-    background-color: #f8f9fa;
-    min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  background-color: rgba(255, 243, 134, 0.867);
+  min-height: 100vh;
+}
+
+.sidebar .btn {
+  margin-bottom: 10px;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    flex-direction: row;
+    justify-content: space-around;
+    min-height: auto;
   }
-  
-  .sidebar .btn {
-    margin-bottom: 10px;
-  }
-  
-  @media (max-width: 768px) {
-    .sidebar {
-      flex-direction: row;
-      justify-content: space-around;
-      min-height: auto;
-    }
-  }
-  
+}
+
+/* Styles pour le bouton "Logout" */
+.logout-button {
+  background-color: #C1C8E4 !important;
+  color: black;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.logout-button:hover {
+  background-color: #C1C8E4; /* Une teinte légèrement plus foncée pour l'effet de survol */
+}
