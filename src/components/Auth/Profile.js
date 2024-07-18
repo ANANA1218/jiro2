@@ -1,20 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { onAuthStateChanged } from "firebase/auth";
-import { auth, db } from '../Firebase'; // Assurez-vous d'importer db depuis votre configuration Firebase
+import { auth, db } from '../Firebase';
 import { Link } from 'react-router-dom';
-import { collection, getDocs, query, where, deleteDoc, doc } from "firebase/firestore"; // Import Firestore methods
+import { collection, getDocs, query, where, deleteDoc, doc, addDoc, serverTimestamp } from "firebase/firestore";
+import './profile.css'; // Assurez-vous que le chemin est correct
 
 const Profile = () => {
     const [user, setUser] = useState(null);
     const [userBoards, setUserBoards] = useState([]);
+    const [boardName, setBoardName] = useState('');
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (userAuth) => {
             if (userAuth) {
-                // Utilisateur connecté
                 setUser(userAuth);
-
-                // Récupérer les boards de l'utilisateur
                 try {
                     const boardsCollection = collection(db, 'boards');
                     const q = query(boardsCollection, where('createdBy', '==', userAuth.uid));
@@ -25,7 +24,6 @@ const Profile = () => {
                     console.error('Error fetching user boards:', error);
                 }
             } else {
-                // Utilisateur non connecté
                 setUser(null);
                 setUserBoards([]);
             }
@@ -36,9 +34,7 @@ const Profile = () => {
 
     const handleDeleteBoard = async (boardId) => {
         try {
-            // Delete board from Firestore
             await deleteDoc(doc(db, 'boards', boardId));
-            // Remove the board from the userBoards state
             setUserBoards(userBoards.filter(board => board.id !== boardId));
             console.log(`Board ${boardId} deleted successfully.`);
         } catch (error) {
@@ -46,18 +42,56 @@ const Profile = () => {
         }
     };
 
+    const handleCreateBoard = async () => {
+        if (boardName.trim() === '') {
+            alert('Board name cannot be empty!');
+            return;
+        }
+
+        try {
+            const docRef = await addDoc(collection(db, "boards"), {
+                name: boardName,
+                createdBy: auth.currentUser.uid,
+                createdAt: serverTimestamp(),
+            });
+
+            await addDoc(collection(db, `boards/${docRef.id}/lanes`), {
+                title: 'Default Lane',
+                cards: []
+            });
+
+            console.log("Board created with ID: ", docRef.id);
+            setUserBoards([...userBoards, { id: docRef.id, name: boardName, createdBy: auth.currentUser.uid }]);
+            setBoardName('');
+        } catch (error) {
+            console.error("Error adding document: ", error);
+        }
+    };
+
     if (!user) {
-        return <div>Loading...</div>; 
+        return <div>Loading...</div>;
     }
 
     return (
-        <section>
-            <h2>Welcome, {user.displayName || user.email}</h2>
-            {user.photoURL && <img src={user.photoURL} alt="Profile" style={{ width: 100, borderRadius: '50%' }} />}
-            <p>Email: {user.email}</p>
+        <div className="profile-container">
+            <div className="profile-header">
+                {user.photoURL && <img src={user.photoURL} alt="Profile" />}
+                <h2>Welcome, {user.displayName || user.email}</h2>
+                <p>Email: {user.email}</p>
+            </div>
+
+            <div className="board-creation">
+                <input
+                    type="text"
+                    value={boardName}
+                    onChange={(e) => setBoardName(e.target.value)}
+                    placeholder="Enter board name"
+                />
+                <button onClick={handleCreateBoard}>Create Board</button>
+            </div>
 
             <h3>Boards:</h3>
-            <ul>
+            <ul className="boards-list">
                 {userBoards.map(board => (
                     <li key={board.id}>
                         <Link to={`/trello-board/${board.id}`}>{board.name}</Link>
@@ -65,7 +99,7 @@ const Profile = () => {
                     </li>
                 ))}
             </ul>
-        </section>
+        </div>
     );
 }
 

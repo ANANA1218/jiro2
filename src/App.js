@@ -14,45 +14,45 @@ import TrelloBoard from './components/Board';
 import { CssBaseline, Container } from '@mui/material';
 import Profile from './components/Auth/Profile';
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from './components/Firebase'; // Assuming your Firebase configuration import
+import { auth } from './components/Firebase';
 
 function App() {
-  const [initializing, setInitializing] = useState(true);
-  const [user, setUser] = useState(null);
+    const [initializing, setInitializing] = useState(true);
+    const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (userAuth) => {
-      setUser(userAuth);
-      setInitializing(false);
-    });
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (userAuth) => {
+            setUser(userAuth);
+            setInitializing(false);
+        });
 
-    return () => unsubscribe();
-  }, []);
+        return () => unsubscribe();
+    }, []);
 
-  if (initializing) {
-    return <div>Loading...</div>;
-  }
+    if (initializing) {
+        return <div>Loading...</div>;
+    }
 
-  return (
-    <Router>
-      <CssBaseline />
-      <div className="App">
-        <Navbar />
-        <Container maxWidth="lg" style={{ paddingTop: '2rem' }}>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/profile" element={user ? <Profile /> : <Navigate to="/login" />} />
-            <Route path="/trello-board/:boardId" element={user ? <TrelloBoard /> : <Navigate to="/login" />} />
-            <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
-            <Route path="/signup" element={user ? <Navigate to="/" /> : <Signup />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/new-board" element={user ? <NewBoard /> : <Navigate to="/login" />} />
-          </Routes>
-        </Container>
-        <Footer />
-      </div>
-    </Router>
-  );
+    return (
+        <Router>
+            <CssBaseline />
+            <div className="App">
+                <Navbar />
+                <Container maxWidth="lg" style={{ paddingTop: '2rem' }}>
+                    <Routes>
+                        <Route path="/" element={user ? <Navigate to="/profile" /> : <Home />} />
+                        <Route path="/profile" element={user ? <Profile /> : <Navigate to="/login" />} />
+                        <Route path="/trello-board/:boardId" element={user ? <TrelloBoard /> : <Navigate to="/login" />} />
+                        <Route path="/login" element={user ? <Navigate to="/profile" /> : <Login />} />
+                        <Route path="/signup" element={user ? <Navigate to="/profile" /> : <Signup />} />
+                        <Route path="/reset-password" element={<ResetPassword />} />
+                        <Route path="/new-board" element={user ? <NewBoard /> : <Navigate to="/login" />} />
+                    </Routes>
+                </Container>
+                <Footer />
+            </div>
+        </Router>
+    );
 }
 
 export default App;

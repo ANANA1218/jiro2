@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { NavLink,useNavigate, Link } from 'react-router-dom';
+import { NavLink, useNavigate, Link } from 'react-router-dom';
 import { auth } from '../Firebase'; // Corriger le chemin d'importation
-import {  signInWithEmailAndPassword   } from 'firebase/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import './Login.css';
 
 const Login = () => {
@@ -10,35 +10,23 @@ const Login = () => {
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
-  /**  const handleLogin = async (e) => {
+    const onLogin = (e) => {
         e.preventDefault();
-        setError('');
-        try {
-            await auth.signInWithEmailAndPassword(email, password);
-            navigate('/'); // Rediriger après la connexion réussie
-        } catch (error) {
-            setError('Email ou mot de passe incorrect.');
-        }
+        signInWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                // Signed in
+                const user = userCredential.user;
+                navigate('/profile'); // Rediriger vers la page de profil après la connexion
+                console.log(user);
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                setError('Email ou mot de passe incorrect.');
+                console.log(errorCode, errorMessage);
+            });
     };
-*/
 
-
-const onLogin = (e) => {
-    e.preventDefault();
-    signInWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-        // Signed in
-        const user = userCredential.user;
-        navigate("/")
-        console.log(user);
-    })
-    .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log(errorCode, errorMessage)
-    });
-   
-}
     return (
         <div className="auth-container">
             <h2>Connexion</h2>
@@ -72,11 +60,11 @@ const onLogin = (e) => {
                 <Link to="/reset-password">Mot de passe oublié ?</Link>
             </div>
             <p className="text-sm text-white text-center">
-             No account yet? {' '}
-             <NavLink to="/signup">
-                 Sign up
-             </NavLink>
-                        </p>
+                No account yet? {' '}
+                <NavLink to="/signup">
+                    Sign up
+                </NavLink>
+            </p>
         </div>
     );
 };

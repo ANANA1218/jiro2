@@ -1,0 +1,108 @@
+/* Profile.css */
+
+.profile-container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+}
+
+.profile-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.profile-header img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+}
+
+.profile-header h2 {
+    margin: 0;
+    color: #333;
+}
+
+.profile-header p {
+    margin: 5px 0;
+    color: #777;
+}
+
+.board-creation {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+.board-creation input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    flex: 1;
+    margin-right: 10px;
+}
+
+.board-creation button {
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.board-creation button:hover {
+    background-color: #45a049;
+}
+
+.boards-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.boards-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.boards-list li a {
+    color: #007bff;
+    text-decoration: none;
+    flex: 1;
+}
+
+.boards-list li a:hover {
+    text-decoration: underline;
+}
+
+.boards-list li button {
+    background: none;
+    border: none;
+    color: #f44336;
+    cursor: pointer;
+}
+
+.boards-list li button:hover {
+    color: #e53935;
+}
+
+@media (max-width: 768px) {
+    .profile-container {
+        padding: 10px;
+    }
+
+    .board-creation {
+        flex-direction: column;
+    }
+
+    .board-creation input, .board-creation button {
+        width: 100%;
+        margin: 5px 0;
+    }
+}
