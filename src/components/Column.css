@@ -106,3 +106,28 @@
 .add-card-btn:hover {
   color: #007bff;
 }
+/* Ajout de transitions pour les colonnes */
+.lane {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  
+  .lane-enter {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  
+  .lane-enter-active {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .lane-exit {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .lane-exit-active {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  
