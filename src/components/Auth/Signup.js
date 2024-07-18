@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { auth } from '../Firebase'; // Corriger le chemin d'importation
-import {  createUserWithEmailAndPassword  } from 'firebase/auth';
+import { auth } from '../Firebase'; // Assurez-vous que c'est correctement configuré
+import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import './Signup.css';
 
 const Signup = () => {
@@ -10,38 +10,23 @@ const Signup = () => {
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
-   /** const handleSignup = async (e) => {
+    const onSubmit = async (e) => {
         e.preventDefault();
-        setError('');
+        
         try {
-            await auth.createUserWithEmailAndPassword(email, password);
-            navigate('/'); // Rediriger après l'inscription réussie
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            // Envoi de l'email de vérification
+            await sendEmailVerification(auth.currentUser);
+            
+            const user = userCredential.user;
+            console.log(user);
+            
+            // Redirection vers la page de connexion après inscription réussie
+            navigate("/login");
         } catch (error) {
             setError(error.message);
         }
     };
-*/ 
-
-const onSubmit = async (e) => {
-    e.preventDefault()
-   
-    await createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-          // Signed in
-          const user = userCredential.user;
-          console.log(user);
-          navigate("/login")
-          // ...
-      })
-      .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          console.log(errorCode, errorMessage);
-          // ..
-      });
-
- 
-  }
 
     return (
         <div className="auth-container">
@@ -73,11 +58,11 @@ const onSubmit = async (e) => {
                 {error && <p className="error-message">{error}</p>}
             </form>
             <p>
-                        Already have an account?{' '}
-                        <NavLink to="/login" >
-                            Sign in
-                        </NavLink>
-                    </p>     
+                Déjà un compte?{' '}
+                <NavLink to="/login">
+                    Connectez-vous
+                </NavLink>
+            </p>     
         </div>
     );
 };

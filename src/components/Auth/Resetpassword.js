@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { auth } from '../Firebase'; // Corriger le chemin d'importation
+import { NavLink } from 'react-router-dom';
+import { auth } from '../Firebase'; // Assurez-vous que c'est correctement configuré
+import { sendPasswordResetEmail } from 'firebase/auth';
 import './Resetpassword.css';
 
 const ResetPassword = () => {
@@ -12,7 +14,7 @@ const ResetPassword = () => {
         setError('');
         setMessage('');
         try {
-            await auth.sendPasswordResetEmail(email);
+            await sendPasswordResetEmail(auth, email);
             setMessage('Un email de réinitialisation a été envoyé à votre adresse.');
         } catch (error) {
             setError('Une erreur est survenue. Veuillez vérifier votre adresse email.');
@@ -38,6 +40,12 @@ const ResetPassword = () => {
                 {error && <p className="error-message">{error}</p>}
                 {message && <p className="success-message">{message}</p>}
             </form>
+            <p>
+                Déjà un compte?{' '}
+                <NavLink to="/login">
+                    Connectez-vous
+                </NavLink>
+            </p>     
         </div>
     );
 };
