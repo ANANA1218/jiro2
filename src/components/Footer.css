@@ -1,11 +1,8 @@
-/* Footer.css */
-
 .footer {
-  background-color: #343a40;
-  color: white;
-  padding: 10px 0;
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  text-align: center;
-}
+    padding: 1rem 0;
+    text-align: center;
+    color: #0038ff;
+    background: none;
+    width: 100%; /* Ensure the footer spans the full width */
+  }
+  

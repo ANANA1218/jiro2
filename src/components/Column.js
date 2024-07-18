@@ -1,122 +1,118 @@
-// src/components/Column.js
 import React, { useState } from 'react';
-import Card from './Card';
 import './Column.css';
+import { FaPlus, FaTrash, FaPalette } from 'react-icons/fa';
+import Card from './Card';
 import { colors } from './colorOptions';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faTrash, faPencilAlt } from '@fortawesome/free-solid-svg-icons';
 
-const Lane = ({
-  lane,
-  onUpdateLaneTitle,
-  onCreateCard,
-  onUpdateCard,
-  onDeleteCard,
-  onDeleteLane,
-  onDragStart,
-  onDragOver,
-  onDrop,
-  onUpdateLaneColor
-}) => {
+const Column = ({ lane, onUpdateLaneTitle, onCreateCard, onUpdateCard, onDeleteCard, onDeleteLane, onUpdateLaneColor }) => {
   const [newCardTitle, setNewCardTitle] = useState('');
   const [newCardDescription, setNewCardDescription] = useState('');
   const [newCardPriority, setNewCardPriority] = useState('Low');
-  const [isAddingCard, setIsAddingCard] = useState(false);
+  const [showColorOptions, setShowColorOptions] = useState(false);
+  const [showNewCardForm, setShowNewCardForm] = useState(false);
 
-  const handleAddCard = () => {
-    if (newCardTitle.trim() === '' || newCardDescription.trim() === '') {
-      alert('Card title and description cannot be empty!');
+  const handleCreateCard = () => {
+    if (newCardTitle.trim() === '') {
+      alert('Card title cannot be empty!');
       return;
     }
-    onCreateCard(lane.id, newCardTitle, newCardDescription, newCardPriority);
+    onCreateCard(lane.id, newCardTitle, newCardDescription, newCardPriority, null);
     setNewCardTitle('');
     setNewCardDescription('');
     setNewCardPriority('Low');
-    setIsAddingCard(false);
+    setShowNewCardForm(false);
   };
 
-  const handleLaneColorChange = (e) => {
-    const newColor = e.target.value;
-    onUpdateLaneColor(lane.id, newColor);
+  const handleColorChange = (color) => {
+    onUpdateLaneColor(lane.id, color);
+    setShowColorOptions(false);
   };
 
-  const handleDropInternal = (e) => {
+  const handleDrop = (e) => {
     e.preventDefault();
-    onDrop(e, lane.id);
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      onCreateCard(lane.id, newCardTitle, newCardDescription, newCardPriority, files[0]);
+    }
   };
 
   return (
-    <div
-      className="column"
-      style={{ backgroundColor: lane.color }}
-      onDragOver={onDragOver}
-      onDrop={handleDropInternal}
-    >
+    <div className="column" style={{ backgroundColor: lane.color }} onDrop={handleDrop} onDragOver={(e) => e.preventDefault()}>
       <div className="lane-header">
-        <h3 onClick={() => onUpdateLaneTitle(lane.id, prompt('New lane title:', lane.title))}>
-          {lane.title}
-        </h3>
+        <input
+          type="text"
+          value={lane.title}
+          onChange={(e) => onUpdateLaneTitle(lane.id, e.target.value)}
+          className="lane-title"
+        />
+        <button className="edit-color" onClick={() => setShowColorOptions(!showColorOptions)}>
+          <FaPalette />
+        </button>
+        {showColorOptions && (
+          <div className="color-options">
+            {colors.map((color, index) => (
+              <div
+                key={index}
+                className="color-option"
+                style={{ backgroundColor: color }}
+                onClick={() => handleColorChange(color)}
+              />
+            ))}
+          </div>
+        )}
       </div>
       <div className="lane-cards">
-        {lane.cards.map(card => (
+        {lane.cards.map((card) => (
           <Card
             key={card.id}
             card={card}
-            onUpdateCard={(updatedTitle, updatedDescription, updatedLabel) =>
-              onUpdateCard(lane.id, card.id, updatedTitle, updatedDescription, updatedLabel)
-            }
-            onDeleteCard={() => onDeleteCard(lane.id, card.id)}
-            onDragStart={onDragStart}
+            laneId={lane.id}
+            onUpdateCard={onUpdateCard}
+            onDeleteCard={onDeleteCard}
           />
         ))}
       </div>
-      <div className="lane-footer">
-        {!isAddingCard ? (
-          <button onClick={() => setIsAddingCard(true)} className="add-card-btn">
-            <FontAwesomeIcon icon={faPlus} />
-          </button>
-        ) : (
-          <div>
-            <input
-              type="text"
-              placeholder="Card title"
-              value={newCardTitle}
-              onChange={(e) => setNewCardTitle(e.target.value)}
-            />
-            <input
-              type="text"
-              placeholder="Card description"
-              value={newCardDescription}
-              onChange={(e) => setNewCardDescription(e.target.value)}
-            />
-            <select
-              value={newCardPriority}
-              onChange={(e) => setNewCardPriority(e.target.value)}
-            >
-              <option value="Low">Low</option>
-              <option value="Medium">Medium</option>
-              <option value="High">High</option>
-              <option value="Critical">Critical</option>
-            </select>
-            <button onClick={handleAddCard}>Add Card</button>
-            <button onClick={() => setIsAddingCard(false)}>Cancel</button>
-          </div>
-        )}
-        <button className="delete-lane" onClick={() => onDeleteLane(lane.id)}>
-          <FontAwesomeIcon icon={faTrash} />
-        </button>
-        <button className="edit-color">
-          <select onChange={handleLaneColorChange} value={lane.color}>
-            {colors.map(color => (
-              <option key={color} value={color} style={{ backgroundColor: color }}>
-                {color}
-              </option>
-            ))}
+      {showNewCardForm ? (
+        <div className="new-card-form">
+          <input
+            type="text"
+            placeholder="Card title"
+            value={newCardTitle}
+            onChange={(e) => setNewCardTitle(e.target.value)}
+            className="form-control mb-2"
+          />
+          <textarea
+            placeholder="Card description"
+            value={newCardDescription}
+            onChange={(e) => setNewCardDescription(e.target.value)}
+            className="form-control mb-2"
+          />
+          <select
+            value={newCardPriority}
+            onChange={(e) => setNewCardPriority(e.target.value)}
+            className="form-control mb-2"
+          >
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+            <option value="Critical">Critical</option>
           </select>
+          <button className="btn btn-primary" onClick={handleCreateCard}>
+            Add Card
+          </button>
+        </div>
+      ) : (
+        <button className="add-card-btn" onClick={() => setShowNewCardForm(true)}>
+          <FaPlus />
+        </button>
+      )}
+      <div className="lane-footer">
+        <button className="delete-lane" onClick={() => onDeleteLane(lane.id)}>
+          <FaTrash />
         </button>
       </div>
     </div>
   );
 };
 
-export default Lane;
+export default Column;

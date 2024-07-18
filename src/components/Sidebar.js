@@ -1,3 +1,4 @@
+// Sidebar.js
 import React from 'react';
 import { Drawer, List, ListItem, ListItemText, Divider, Button } from '@mui/material';
 import './Sidebar.css';
@@ -24,7 +25,7 @@ const Sidebar = ({ open, onClose }) => {
           </ListItem>
           <Divider />
           <ListItem>
-            <Button onClick={handleLogout} variant="contained" color="secondary" fullWidth>
+            <Button onClick={handleLogout} variant="contained" className="logout-button" fullWidth>
               Logout
             </Button>
           </ListItem>

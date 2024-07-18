@@ -1,4 +1,142 @@
 /* Navbar.css */
 .MuiAppBar-root {
-  background-color: #3f51b5;
-}
+    background-color: #fff9db; /* pastel yellow */
+  }
+  
+  .navbar {
+    background-color: #fff9db; /* pastel yellow */
+    color: black;
+  }
+  
+  .navbar-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    position: relative;
+  }
+  
+  .navbar-logo {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  .navbar-logo img {
+    height: 50px; /* Adjust the size as needed */
+  }
+  
+  .navbar-links {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    margin-left: auto;
+  }
+  
+  .navbar-links a {
+    color: #0038ff;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  @media (max-width: 768px) {
+    .navbar-toolbar {
+      flex-direction: column;
+    }
+  
+    .navbar-links {
+      order: 1;
+      flex-direction: column;
+      gap: 10px;
+    }
+  
+    .navbar-logo {
+      order: 2;
+    }
+  
+    .navbar-logo img {
+      height: 40px; /* Adjust the size for smaller screens */
+    }
+  
+    .MuiIconButton-root {
+      order: 3;
+    }
+  }
+  .navbar {
+    background-color: #fff9db; /* pastel yellow */
+  }
+  
+  .navbar-toolbar {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .navbar-logo img {
+    height: 40px;
+  }
+  
+  .navbar-links a {
+    margin: 0 10px;
+    color: #000; /* Adjust as necessary */
+    text-decoration: none;
+  }
+  
+  .navbar-links a:hover {
+    text-decoration: underline;
+  }
+  
+  .sidebar-button {
+    color: #0000ff; /* The same blue color as the 'Home' link */
+  }
+
+  .navbar-logo {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  .navbar-logo-img {
+    height: 80px; /* Increase the height for a larger logo */
+  }
+  
+  .navbar-links {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    margin-left: auto;
+  }
+  
+  .navbar-links a {
+    color: #0038ff;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  .sidebar-button {
+    color: #0038ff !important; /* Apply the same blue color */
+  }
+  
+  @media (max-width: 768px) {
+    .navbar-toolbar {
+      flex-direction: column;
+    }
+  
+    .navbar-links {
+      order: 1;
+      flex-direction: column;
+      gap: 10px;
+    }
+  
+    .navbar-logo {
+      order: 2;
+    }
+  
+    .navbar-logo-img {
+      height: 60px; /* Adjust the size for smaller screens */
+    }
+  
+    .MuiIconButton-root {
+      order: 3;
+    }
+  }
+  
