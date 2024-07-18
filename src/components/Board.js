@@ -11,9 +11,34 @@ const Board = () => {
   const [newLaneTitle, setNewLaneTitle] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [filterPriority, setFilterPriority] = useState('All');
+  const [boardName, setBoardName] = useState(''); // State to hold board name
 
   const params = useParams();
   const effectiveBoardId = params.boardId;
+
+
+  useEffect(() => {
+    const fetchBoardData = async () => {
+      try {
+        const boardRef = doc(db, 'boards', effectiveBoardId);
+        const boardSnap = await getDoc(boardRef);
+
+        if (boardSnap.exists()) {
+          setBoardName(boardSnap.data().name); // Set the board name from Firestore
+        } else {
+          console.error('Board not found');
+          setBoardName('Unknown'); // Placeholder for error handling
+        }
+      } catch (error) {
+        console.error('Error fetching board:', error);
+      }
+    };
+
+    fetchBoardData();
+  }, [effectiveBoardId]);
+
+
+
 
   useEffect(() => {
       const fetchLanes = async () => {
@@ -232,6 +257,7 @@ const filteredLanes = lanes.map(lane => ({
   return (
     <div className="board-container">
       <div className="board-header">
+        <h2>{boardName}</h2> {/* Display the board name */}
         <div className="form-group">
           <input
             type="text"
