@@ -2,4 +2,24 @@
     width: 250px;
     padding: 10px;
   }
+  /* Sidebar Styles */
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+  }
+  
+  .sidebar .btn {
+    margin-bottom: 10px;
+  }
+  
+  @media (max-width: 768px) {
+    .sidebar {
+      flex-direction: row;
+      justify-content: space-around;
+      min-height: auto;
+    }
+  }
   

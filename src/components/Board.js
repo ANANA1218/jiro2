@@ -4,7 +4,7 @@ import './Board.css';
 import { db } from './Firebase';
 import { collection, getDocs, setDoc, doc, onSnapshot, deleteDoc, getDoc, updateDoc } from 'firebase/firestore';
 import Lane from './Column';
-import { colors } from './colorOptions'; // Import the colors array
+import { colors } from './colorOptions';
 
 const Board = () => {
   const [lanes, setLanes] = useState([]);
@@ -170,15 +170,12 @@ const Board = () => {
 
   const handleDragOver = (e) => e.preventDefault();
 
-  const handleDrop = async (e) => {
-    const cardId = e.dataTransfer.getData('cardId');
-    const sourceLaneId = e.dataTransfer.getData('sourceLaneId');
-    const targetLaneId = e.currentTarget.dataset.laneid;
-
+  const handleDrop = async (e, cardId, sourceLaneId, targetLaneId) => {
+    e.preventDefault();
     const sourceLane = lanes.find(lane => lane.id === sourceLaneId);
     const targetLane = lanes.find(lane => lane.id === targetLaneId);
 
-    if (sourceLane && targetLane && sourceLane.id !== targetLane.id) {
+    if (sourceLane && targetLane) {
       const cardToMove = sourceLane.cards.find(card => card.id === cardId);
       const updatedSourceCards = sourceLane.cards.filter(card => card.id !== cardId);
       const updatedTargetCards = [...targetLane.cards, cardToMove];
@@ -211,12 +208,12 @@ const Board = () => {
   }));
 
   return (
-    <div className="container-fluid">
-      <div className="row">
-        <div className="col-md-4">
+    <div className="board-container">
+      <div className="board-header">
+        <div className="form-group">
           <input
             type="text"
-            className="form-control mb-2"
+            className="form-control"
             placeholder="New lane title"
             value={newLaneTitle}
             onChange={(e) => setNewLaneTitle(e.target.value)}
@@ -225,18 +222,18 @@ const Board = () => {
             Add Lane
           </button>
         </div>
-        <div className="col-md-4">
+        <div className="form-group">
           <input
             type="text"
-            className="form-control mb-2"
+            className="form-control"
             placeholder="Search cards"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <div className="col-md-4">
+        <div className="form-group">
           <select
-            className="form-control mb-2"
+            className="form-control"
             value={filterPriority}
             onChange={(e) => setFilterPriority(e.target.value)}
           >
@@ -248,7 +245,7 @@ const Board = () => {
           </select>
         </div>
       </div>
-      <div className="row mt-3">
+      <div className="board">
         {filteredLanes.map(lane => (
           <Lane
             key={lane.id}

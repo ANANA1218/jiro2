@@ -1,44 +1,74 @@
-// src/components/Card.js
-import React from 'react';
+import React, { useState } from 'react';
 import './Card.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash, faPencilAlt } from '@fortawesome/free-solid-svg-icons';
+import { FaTrash, FaPencilAlt } from 'react-icons/fa';
 
-const Card = ({ card, onUpdateCard, onDeleteCard, onDragStart }) => {
-  const getPriorityClass = (priority) => {
-    switch (priority) {
-      case 'Low':
-        return 'card-low';
-      case 'Medium':
-        return 'card-medium';
-      case 'High':
-        return 'card-high';
-      case 'Critical':
-        return 'card-critical';
-      default:
-        return '';
-    }
+const Card = ({ card, laneId, onUpdateCard, onDeleteCard }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedTitle, setEditedTitle] = useState(card.title);
+  const [editedDescription, setEditedDescription] = useState(card.description);
+  const [editedPriority, setEditedPriority] = useState(card.priority);
+
+  const handleSave = () => {
+    onUpdateCard(laneId, card.id, editedTitle, editedDescription, editedPriority);
+    setIsEditing(false);
   };
 
   return (
-    <div
-      className={`card ${getPriorityClass(card.priority)}`}
-      draggable
-      onDragStart={(e) => onDragStart(e, card.id)}
-    >
-      <h4>{card.title}</h4>
-      <p>{card.description}</p>
-      <p>{card.label}</p>
-      <div className="card-footer">
-        <button onClick={() => onUpdateCard(card.id)} className="edit-card-btn">
-          <FontAwesomeIcon icon={faPencilAlt} />
-        </button>
-        <button onClick={() => onDeleteCard(card.id)} className="delete-card-btn">
-          <FontAwesomeIcon icon={faTrash} />
-        </button>
-      </div>
+    <div className="card" style={{ backgroundColor: getColorByPriority(card.priority) }}>
+      {isEditing ? (
+        <>
+          <input
+            type="text"
+            value={editedTitle}
+            onChange={(e) => setEditedTitle(e.target.value)}
+          />
+          <textarea
+            value={editedDescription}
+            onChange={(e) => setEditedDescription(e.target.value)}
+          />
+          <select
+            value={editedPriority}
+            onChange={(e) => setEditedPriority(e.target.value)}
+          >
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+            <option value="Critical">Critical</option>
+          </select>
+          <button onClick={handleSave}>Save</button>
+        </>
+      ) : (
+        <>
+          <h5>{card.title}</h5>
+          <p>{card.description}</p>
+          <span>{card.priority}</span>
+          <div className="card-footer">
+            <button onClick={() => setIsEditing(true)}>
+              <FaPencilAlt />
+            </button>
+            <button onClick={() => onDeleteCard(laneId, card.id)}>
+              <FaTrash />
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
+};
+
+const getColorByPriority = (priority) => {
+  switch (priority) {
+    case 'Low':
+      return '#d4edda';
+    case 'Medium':
+      return '#fff3cd';
+    case 'High':
+      return '#f8d7da';
+    case 'Critical':
+      return '#f5c6cb';
+    default:
+      return '#f7f7f7';
+  }
 };
 
 export default Card;
