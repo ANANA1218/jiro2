@@ -1,22 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import './Card.css';
 import { FaTrash, FaPencilAlt, FaUpload } from 'react-icons/fa';
+import { getUsers } from './Firebase'; // Importer la fonction getUsers
 
 const Card = ({ card, laneId, onUpdateCard, onDeleteCard }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(card.title);
   const [editedDescription, setEditedDescription] = useState(card.description);
   const [editedPriority, setEditedPriority] = useState(card.priority);
-  const [file, setFile] = useState(null);
+  const [file, setFile] = useState(card.file);
+  const [users, setUsers] = useState([]);
+  const [assignedUser, setAssignedUser] = useState(card.assignedUser || '');
 
   useEffect(() => {
     setEditedTitle(card.title);
     setEditedDescription(card.description);
     setEditedPriority(card.priority);
+    setFile(card.file);
+    setAssignedUser(card.assignedUser || '');
+
+    // Récupérer les utilisateurs lors du montage du composant
+    const fetchUsers = async () => {
+      const usersList = await getUsers();
+      setUsers(usersList);
+    };
+    fetchUsers();
   }, [card]);
 
   const handleSave = () => {
-    onUpdateCard(laneId, card.id, editedTitle, editedDescription, editedPriority, file);
+    onUpdateCard(laneId, card.id, editedTitle, editedDescription, editedPriority, file, assignedUser);
     setIsEditing(false);
   };
 
@@ -47,6 +59,15 @@ const Card = ({ card, laneId, onUpdateCard, onDeleteCard }) => {
             <option value="Critical">Critical</option>
           </select>
           <input type="file" onChange={handleFileChange} />
+          <select
+            value={assignedUser}
+            onChange={(e) => setAssignedUser(e.target.value)}
+          >
+            <option value="">Aucun utilisateur assigné</option>
+            {users.map(user => (
+              <option key={user.id} value={user.email}>{user.email}</option>
+            ))}
+          </select>
           <button onClick={handleSave}>Save</button>
         </>
       ) : (
@@ -54,13 +75,14 @@ const Card = ({ card, laneId, onUpdateCard, onDeleteCard }) => {
           <h5>{card.title}</h5>
           <p>{card.description}</p>
           <span>{card.priority}</span>
-          {card.file && (
+          {file && (
             <div className="file-preview">
-              <a href={URL.createObjectURL(card.file)} target="_blank" rel="noopener noreferrer">
-                <FaUpload /> {card.file.name}
+              <a href={URL.createObjectURL(file)} target="_blank" rel="noopener noreferrer">
+                <FaUpload /> {file.name}
               </a>
             </div>
           )}
+          {assignedUser && <p>Assigné à : {assignedUser}</p>}
           <div className="card-footer">
             <button onClick={() => setIsEditing(true)}>
               <FaPencilAlt />

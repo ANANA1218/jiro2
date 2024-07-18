@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Board.css';
-import { db } from './Firebase';
+import { db, getUsers } from './Firebase'; // Importer getUsers
 import { collection, getDocs, setDoc, doc, onSnapshot, deleteDoc, getDoc, updateDoc } from 'firebase/firestore';
 import Lane from './Column';
 import { colors } from './colorOptions';
@@ -12,6 +12,7 @@ const Board = () => {
   const [newLaneTitle, setNewLaneTitle] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [filterPriority, setFilterPriority] = useState('All');
+  const [users, setUsers] = useState([]);
 
   useEffect(() => {
     const fetchLanes = async () => {
@@ -35,7 +36,13 @@ const Board = () => {
       setLanes(updatedLanes);
     });
 
+    const fetchUsers = async () => {
+      const usersList = await getUsers();
+      setUsers(usersList);
+    };
+
     fetchLanes();
+    fetchUsers();
 
     return () => unsubscribe();
   }, []);
@@ -92,7 +99,7 @@ const Board = () => {
     }
   };
 
-  const onCreateCard = async (laneId, cardTitle, cardDescription, cardPriority) => {
+  const onCreateCard = async (laneId, cardTitle, cardDescription, cardPriority, assignedUser) => {
     try {
       const laneRef = doc(db, 'lanes', laneId);
       const laneDoc = await getDoc(laneRef);
@@ -104,7 +111,8 @@ const Board = () => {
           title: cardTitle,
           description: cardDescription,
           priority: cardPriority,
-          label: currentDate
+          label: currentDate,
+          assignedUser: assignedUser || '' // Ajout de l'utilisateur assigné
         };
 
         const updatedCards = [...laneDoc.data().cards, newCard];
@@ -117,7 +125,8 @@ const Board = () => {
     }
   };
 
-  const onUpdateCard = async (laneId, cardId, updatedTitle, updatedDescription, updatedLabel) => {
+  // Utiliser la fonction existante pour inclure la mise à jour de l'utilisateur assigné
+  const onUpdateCard = async (laneId, cardId, updatedTitle, updatedDescription, updatedPriority, updatedFile, updatedUser) => {
     try {
       const laneRef = doc(db, 'lanes', laneId);
       const laneDoc = await getDoc(laneRef);
@@ -129,7 +138,9 @@ const Board = () => {
               ...card,
               title: updatedTitle,
               description: updatedDescription,
-              label: updatedLabel
+              priority: updatedPriority,
+              file: updatedFile,
+              assignedUser: updatedUser // Mise à jour de l'utilisateur assigné
             };
           }
           return card;
@@ -245,7 +256,7 @@ const Board = () => {
             lane={lane}
             onUpdateLaneTitle={handleUpdateLaneTitle}
             onCreateCard={onCreateCard}
-            onUpdateCard={onUpdateCard}
+            onUpdateCard={onUpdateCard} // Utiliser la fonction mise à jour
             onDeleteCard={onDeleteCard}
             onDeleteLane={handleDeleteLane}
             onDragStart={handleDragStart}

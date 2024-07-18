@@ -31,7 +31,6 @@ const Column = ({ lane, onUpdateLaneTitle, onCreateCard, onUpdateCard, onDeleteC
   const handleDrop = (e) => {
     e.preventDefault();
     const files = e.dataTransfer.files;
-    // Assuming files[0] is the file to be added
     if (files.length > 0) {
       onCreateCard(lane.id, newCardTitle, newCardDescription, newCardPriority, files[0]);
     }

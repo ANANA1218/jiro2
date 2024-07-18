@@ -1,6 +1,6 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import { getFirestore, getDocs, collection } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: "AIzaSyDt7yqJ8zqkZ2lWIHSB8Gun4byRUqGYs6s",
@@ -20,5 +20,12 @@ if (!getApps().length) {
 
 const auth = getAuth(app);
 const db = getFirestore(app);
+
+// Fonction pour récupérer tous les utilisateurs
+export const getUsers = async () => {
+  const usersSnapshot = await getDocs(collection(db, 'users'));
+  const usersList = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  return usersList;
+};
 
 export { auth, db };
