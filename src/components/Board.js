@@ -5,115 +5,102 @@ import { useParams } from 'react-router-dom';
 import { db } from './Firebase';
 import { collection, getDocs, updateDoc, doc,getDoc,addDoc, deleteDoc } from 'firebase/firestore';
 import Lane from './Column';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+
+
 
 const Board = () => {
   const [lanes, setLanes] = useState([]);
   const [newLaneTitle, setNewLaneTitle] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [filterPriority, setFilterPriority] = useState('All');
-  const [users, setUsers] = useState([]);
+
+  const params = useParams();
+  const effectiveBoardId = params.boardId;
 
   useEffect(() => {
-    const fetchLanes = async () => {
-      try {
-        const lanesSnapshot = await getDocs(collection(db, 'lanes'));
-        const lanesData = lanesSnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
-        setLanes(lanesData);
-      } catch (error) {
-        console.error('Error fetching lanes:', error);
-      }
-    };
+      const fetchLanes = async () => {
+          if (effectiveBoardId) {
+              try {
+                  const lanesSnapshot = await getDocs(collection(db, `boards/${effectiveBoardId}/lanes`));
+                  const lanesData = lanesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                  setLanes(lanesData);
+              } catch (error) {
+                  console.error('Error fetching lanes:', error);
+              }
+          }
+      };
 
-    const unsubscribe = onSnapshot(collection(db, 'lanes'), snapshot => {
-      const updatedLanes = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      setLanes(updatedLanes);
-    });
-
-    const fetchUsers = async () => {
-      const usersList = await getUsers();
-      setUsers(usersList);
-    };
-
-    fetchLanes();
-    fetchUsers();
-
-    return () => unsubscribe();
-  }, []);
+      fetchLanes();
+  }, [effectiveBoardId]);
 
   const handleCreateLane = async () => {
     if (newLaneTitle.trim() === '') {
-      alert('Lane title cannot be empty!');
-      return;
+        alert('Lane title cannot be empty!');
+        return;
     }
 
     try {
-      const newLaneRef = doc(collection(db, 'lanes'));
-      const newLane = {
-        title: newLaneTitle,
-        color: colors[Math.floor(Math.random() * colors.length)], // Assigner une couleur aléatoire
-        cards: []
-      };
-
-      await setDoc(newLaneRef, newLane);
-      console.log(`Created new lane "${newLaneTitle}" in Firestore`);
-      setNewLaneTitle('');
+        const newLaneRef = await addDoc(collection(db, `boards/${effectiveBoardId}/lanes`), {
+            title: newLaneTitle,
+            cards: []
+        });
+        const newLane = { id: newLaneRef.id, title: newLaneTitle, cards: [] };
+        setLanes([...lanes, newLane]);
+        console.log(`Created new lane "${newLaneTitle}" in Firestore with ID: ${newLaneRef.id}`);
+        setNewLaneTitle('');
     } catch (error) {
-      console.error('Error creating lane:', error);
+        console.error('Error creating lane:', error);
     }
-  };
+};
 
-  const handleUpdateLaneTitle = async (laneId, newTitle) => {
+const handleUpdateLaneTitle = async (laneId, newTitle) => {
     try {
-      const laneRef = doc(db, 'lanes', laneId);
-      await updateDoc(laneRef, { title: newTitle });
-      console.log(`Updated lane "${laneId}" title to "${newTitle}" in Firestore`);
+        const laneRef = doc(db, `boards/${effectiveBoardId}/lanes`, laneId);
+        await updateDoc(laneRef, { title: newTitle });
+        setLanes(lanes.map(lane => (lane.id === laneId ? { ...lane, title: newTitle } : lane)));
+        console.log(`Updated lane "${laneId}" title to "${newTitle}" in Firestore`);
     } catch (error) {
-      console.error('Error updating lane title:', error);
+        console.error('Error updating lane title:', error);
     }
-  };
+};
 
-  const handleUpdateLaneColor = async (laneId, newColor) => {
+const handleDeleteLane = async (laneId) => {
     try {
-      const laneRef = doc(db, 'lanes', laneId);
-      await updateDoc(laneRef, { color: newColor });
-      console.log(`Updated lane "${laneId}" color to "${newColor}" in Firestore`);
+        const laneRef = doc(db, `boards/${effectiveBoardId}/lanes`, laneId);
+        await deleteDoc(laneRef);
+        setLanes(lanes.filter(lane => lane.id !== laneId));
+        console.log(`Deleted lane "${laneId}" from Firestore`);
     } catch (error) {
-      console.error('Error updating lane color:', error);
+        console.error('Error deleting lane:', error);
     }
-  };
+};
 
-  const handleDeleteLane = async (laneId) => {
+const handleCreateCard = async (laneId, cardTitle, cardDescription, cardPriority, file) => {
     try {
-      const laneRef = doc(db, 'lanes', laneId);
-      await deleteDoc(laneRef);
-      console.log(`Deleted lane "${laneId}" from Firestore`);
-    } catch (error) {
-      console.error('Error deleting lane:', error);
-    }
-  };
-
-  const onCreateCard = async (laneId, cardTitle, cardDescription, cardPriority, assignedUser) => {
-    try {
-      const laneRef = doc(db, 'lanes', laneId);
+      const laneRef = doc(db, `boards/${effectiveBoardId}/lanes`, laneId);
       const laneDoc = await getDoc(laneRef);
-
+  
       if (laneDoc.exists()) {
         const currentDate = new Date().toISOString().split('T')[0];
+        let fileURL = '';
+  
+        if (file) {
+          const storage = getStorage();
+          const storageRef = ref(storage, `files/${file.name}`);
+          await uploadBytes(storageRef, file);
+          fileURL = await getDownloadURL(storageRef);
+        }
+  
         const newCard = {
           id: Date.now().toString(),
           title: cardTitle,
           description: cardDescription,
-          priority: cardPriority,
           label: currentDate,
-          assignedUser: assignedUser || ''
+          priority: cardPriority,
+          fileURL: fileURL
         };
-
+  
         const updatedCards = [...laneDoc.data().cards, newCard];
         await updateDoc(laneRef, { cards: updatedCards });
         setLanes(lanes.map(lane => (lane.id === laneId ? { ...lane, cards: updatedCards } : lane)));
@@ -123,102 +110,140 @@ const Board = () => {
       console.error('Error creating card:', error);
     }
   };
+  
 
-  const onUpdateCard = async (laneId, cardId, updatedTitle, updatedDescription, updatedPriority, updatedFileURL, updatedUser) => {
-    console.log('onUpdateCard called with:', {
-      laneId,
-      cardId,
-      updatedTitle,
-      updatedDescription,
-      updatedPriority,
-      updatedFileURL,
-      updatedUser
-    });
-
-    try {
-      const laneRef = doc(db, 'lanes', laneId);
+const handleUpdateCard = async (laneId, cardId, updatedTitle, updatedDescription, updatedLabel, updatedPriority) => {
+  try {
+      const laneRef = doc(db, `boards/${effectiveBoardId}/lanes`, laneId);
       const laneDoc = await getDoc(laneRef);
 
       if (laneDoc.exists()) {
-        const updatedCards = laneDoc.data().cards.map(card => {
-          if (card.id === cardId) {
-            return {
-              ...card,
-              title: updatedTitle,
-              description: updatedDescription,
-              priority: updatedPriority,
-              fileURL: updatedFileURL,
-              assignedUser: updatedUser
-            };
-          }
-          return card;
-        });
+          const updatedCards = laneDoc.data().cards.map(card => {
+              if (card.id === cardId) {
+                  return {
+                      ...card,
+                      title: updatedTitle,
+                      description: updatedDescription,
+                      label: updatedLabel,
+                      priority: updatedPriority
+                  };
+              }
+              return card;
+          });
 
-        await updateDoc(laneRef, { cards: updatedCards });
-        setLanes(lanes.map(lane => (lane.id === laneId ? { ...lane, cards: updatedCards } : lane)));
-        console.log(`Updated card "${cardId}" in lane "${laneId}" in Firestore`);
-      } else {
-        console.log(`Lane "${laneId}" does not exist`);
+          await updateDoc(laneRef, { cards: updatedCards });
+          setLanes(lanes.map(lane => (lane.id === laneId ? { ...lane, cards: updatedCards } : lane)));
+          console.log(`Updated card "${cardId}" in lane "${laneId}" in Firestore`);
       }
-    } catch (error) {
+  } catch (error) {
       console.error('Error updating card:', error);
-      throw error;
-    }
-  };
+  }
+};
 
-  const onDeleteCard = async (laneId, cardId) => {
+
+/*  const handleDeleteCard = async (laneId, cardId) => {
     try {
-      const laneRef = doc(db, 'lanes', laneId);
-      const laneDoc = await getDoc(laneRef);
+        const laneRef = doc(db, `boards/${effectiveBoardId}/lanes`, laneId);
+        const laneDoc = await getDoc(laneRef);
 
-      if (laneDoc.exists()) {
-        const updatedCards = laneDoc.data().cards.filter(card => card.id !== cardId);
-        await updateDoc(laneRef, { cards: updatedCards });
-        setLanes(lanes.map(lane => (lane.id === laneId ? { ...lane, cards: updatedCards } : lane)));
-        console.log(`Deleted card "${cardId}" from lane "${laneId}" in Firestore`);
-      } else {
-        console.log(`Lane "${laneId}" does not exist`);
-      }
+        if (laneDoc.exists()) {
+            const updatedCards = laneDoc.data().cards.filter(card => card.id !== cardId);
+            await updateDoc(laneRef, { cards: updatedCards });
+            setLanes(lanes.map(lane => (lane.id === laneId ? { ...lane, cards: updatedCards } : lane)));
+            console.log(`Deleted card "${cardId}" from lane "${laneId}" in Firestore`);
+        }
     } catch (error) {
-      console.error('Error deleting card:', error);
+        console.error('Error deleting card:', error);
     }
-  };
+};*/
 
-  const handleDragStart = (e, cardId, sourceLaneId) => {
+const handleDragStart = (e, cardId) => {
     e.dataTransfer.setData('cardId', cardId);
-    e.dataTransfer.setData('sourceLaneId', sourceLaneId);
-  };
+};
 
-  const handleDragOver = (e) => e.preventDefault();
+const handleDragOver = (e) => {
+    e.preventDefault();
+};
 
-  const handleDrop = async (e, cardId, sourceLaneId, targetLaneId) => {
+const handleDrop = async (e, cardId, sourceLaneId, targetLaneId) => {
     e.preventDefault();
     const sourceLane = lanes.find(lane => lane.id === sourceLaneId);
     const targetLane = lanes.find(lane => lane.id === targetLaneId);
 
     if (sourceLane && targetLane) {
-      const cardToMove = sourceLane.cards.find(card => card.id === cardId);
-      const updatedSourceCards = sourceLane.cards.filter(card => card.id !== cardId);
-      const updatedTargetCards = [...targetLane.cards, cardToMove];
+        const cardToMove = sourceLane.cards.find(card => card.id === cardId);
+        let updatedSourceCards = [...sourceLane.cards];
+        let updatedTargetCards = [...targetLane.cards];
 
-      try {
-        await updateDoc(doc(db, 'lanes', sourceLane.id), { cards: updatedSourceCards });
-        await updateDoc(doc(db, 'lanes', targetLane.id), { cards: updatedTargetCards });
-        console.log(`Moved card "${cardId}" from lane "${sourceLane.id}" to lane "${targetLane.id}"`);
-      } catch (error) {
-        console.error('Error moving card:', error);
-      }
+        if (sourceLaneId !== targetLaneId) {
+            updatedSourceCards = sourceLane.cards.filter(card => card.id !== cardId);
+            updatedTargetCards = [...targetLane.cards, cardToMove];
+        } else {
+            const sourceIndex = sourceLane.cards.findIndex(card => card.id === cardId);
+            updatedTargetCards = [...sourceLane.cards];
+            updatedTargetCards.splice(sourceIndex, 1);
+            updatedTargetCards.splice(e.dataTransfer.getData('index'), 0, cardToMove);
+        }
+
+        try {
+            await updateDoc(doc(db, `boards/${effectiveBoardId}/lanes`, sourceLaneId), { cards: updatedSourceCards });
+            await updateDoc(doc(db, `boards/${effectiveBoardId}/lanes`, targetLaneId), { cards: updatedTargetCards });
+            console.log(`Moved card "${cardId}" from lane "${sourceLaneId}" to lane "${targetLaneId}"`);
+            setLanes(lanes.map(lane => {
+                if (lane.id === sourceLaneId) {
+                    return { ...lane, cards: updatedSourceCards };
+                }
+                if (lane.id === targetLaneId) {
+                    return { ...lane, cards: updatedTargetCards };
+                }
+                return lane;
+            }));
+        } catch (error) {
+            console.error('Error moving card:', error);
+        }
     }
-  };
+};
 
-  const filteredLanes = lanes.map(lane => ({
-    ...lane,
-    cards: lane.cards.filter(card => {
+
+
+
+ // Function to delete a card
+ const handleDeleteCard = async (laneId, cardId) => {
+    try {
+        const laneRef = doc(db, `boards/${effectiveBoardId}/lanes`, laneId);
+        const laneDoc = await getDoc(laneRef);
+
+        if (laneDoc.exists()) {
+            const updatedCards = laneDoc.data().cards.filter(card => card.id !== cardId);
+            await updateDoc(laneRef, { cards: updatedCards });
+            setLanes(lanes.map(lane => (lane.id === laneId ? { ...lane, cards: updatedCards } : lane)));
+            console.log(`Deleted card "${cardId}" from lane "${laneId}" in Firestore`);
+        }
+    } catch (error) {
+        console.error('Error deleting card:', error);
+    }
+};
+
+const handleUpdateLaneColor = async (laneId, newColor) => {
+  try {
+      const laneRef = doc(db, `boards/${effectiveBoardId}/lanes`, laneId);
+      await updateDoc(laneRef, { color: newColor });
+      console.log(`Updated lane "${laneId}" color to "${newColor}" in Firestore`);
+  } catch (error) {
+      console.error('Error updating lane color:', error);
+  }
+};
+
+const filteredLanes = lanes.map(lane => ({
+  ...lane,
+  cards: lane.cards.filter(card => {
       const matchesPriority = filterPriority === 'All' || card.priority === filterPriority;
       const matchesSearch = card.title.toLowerCase().includes(searchTerm.toLowerCase());
       return matchesPriority && matchesSearch;
-    })
-  }));
+  })
+}));
+
+
 
   return (
     <div className="board-container">
@@ -260,13 +285,13 @@ const Board = () => {
       </div>
       <div className="board">
         {filteredLanes.map(lane => (
-          <Column
+          <Lane
             key={lane.id}
             lane={lane}
             onUpdateLaneTitle={handleUpdateLaneTitle}
-            onCreateCard={onCreateCard}
-            onUpdateCard={onUpdateCard}
-            onDeleteCard={onDeleteCard}
+            onCreateCard={handleCreateCard}
+            onUpdateCard={handleUpdateCard}
+            onDeleteCard={handleDeleteCard}
             onDeleteLane={handleDeleteLane}
             onDragStart={handleDragStart}
             onDragOver={handleDragOver}
