@@ -8,6 +8,7 @@ const Column = ({ lane, onUpdateLaneTitle, onCreateCard, onUpdateCard, onDeleteC
   const [newCardTitle, setNewCardTitle] = useState('');
   const [newCardDescription, setNewCardDescription] = useState('');
   const [newCardPriority, setNewCardPriority] = useState('Low');
+  const [file, setFile] = useState(null);
   const [showColorOptions, setShowColorOptions] = useState(false);
   const [showNewCardForm, setShowNewCardForm] = useState(false);
 
@@ -16,10 +17,11 @@ const Column = ({ lane, onUpdateLaneTitle, onCreateCard, onUpdateCard, onDeleteC
       alert('Card title cannot be empty!');
       return;
     }
-    onCreateCard(lane.id, newCardTitle, newCardDescription, newCardPriority, null);
+    onCreateCard(lane.id, newCardTitle, newCardDescription, newCardPriority, file);
     setNewCardTitle('');
     setNewCardDescription('');
     setNewCardPriority('Low');
+    setFile(null);
     setShowNewCardForm(false);
   };
 
@@ -32,20 +34,20 @@ const Column = ({ lane, onUpdateLaneTitle, onCreateCard, onUpdateCard, onDeleteC
     e.preventDefault();
     const files = e.dataTransfer.files;
     if (files.length > 0) {
-      onCreateCard(lane.id, newCardTitle, newCardDescription, newCardPriority, files[0]);
+      setFile(files[0]);
     }
   };
 
   return (
     <div className="column" style={{ backgroundColor: lane.color }} onDrop={handleDrop} onDragOver={(e) => e.preventDefault()}>
       <div className="lane-header">
-      <input
-        type="text"
-        className="lane-title"
-        value={lane.title}
-        onChange={(e) => onUpdateLaneTitle(lane.id, e.target.value)}
-        style={{ backgroundColor: lane.color }}
-      />
+        <input
+          type="text"
+          className="lane-title"
+          value={lane.title}
+          onChange={(e) => onUpdateLaneTitle(lane.id, e.target.value)}
+          style={{ backgroundColor: lane.color }}
+        />
         <button className="edit-color" onClick={() => setShowColorOptions(!showColorOptions)}>
           <FaPalette />
         </button>
@@ -99,6 +101,7 @@ const Column = ({ lane, onUpdateLaneTitle, onCreateCard, onUpdateCard, onDeleteC
             <option value="High">High</option>
             <option value="Critical">Critical</option>
           </select>
+          <input type="file" onChange={(e) => setFile(e.target.files[0])} />
           <button className="btn btn-primary" onClick={handleCreateCard}>
             Add Card
           </button>

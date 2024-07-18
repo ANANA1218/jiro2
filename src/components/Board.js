@@ -9,6 +9,7 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 
 
+
 const Board = () => {
   const [lanes, setLanes] = useState([]);
   const [newLaneTitle, setNewLaneTitle] = useState('');
@@ -135,6 +136,7 @@ const handleCreateCard = async (laneId, cardTitle, cardDescription, cardPriority
       console.error('Error creating card:', error);
     }
   };
+  
   
 
 const handleUpdateCard = async (laneId, cardId, updatedTitle, updatedDescription, updatedLabel, updatedPriority) => {

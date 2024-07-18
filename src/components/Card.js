@@ -76,7 +76,7 @@ const Card = ({ card, laneId, onUpdateCard, onDeleteCard, onDragStart }) => {
   };
 
   return (
-    <div className="card" style={{ backgroundColor: getColorByPriority(editedPriority) }} role="article" aria-labelledby={`card-title-${card.id}`}>
+    <div className="card" style={{ backgroundColor: getColorByPriority(editedPriority) }} role="article" aria-labelledby={`card-title-${card.id}`} draggable onDragStart={(e) => onDragStart(e, card.id, laneId)}>
       {isEditing ? (
         <>
           <input
@@ -154,4 +154,3 @@ const getColorByPriority = (priority) => {
 };
 
 export default Card;
-
