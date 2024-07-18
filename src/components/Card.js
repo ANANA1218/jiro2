@@ -1,25 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import './Card.css';
-import { FaTrash, FaPencilAlt, FaUpload } from 'react-icons/fa';
-import { getUsers } from './Firebase'; // Importer la fonction getUsers
+import { FaTrash, FaPencilAlt } from 'react-icons/fa';
+import { getUsers } from './Firebase';
+import { storage } from './Firebase'; // Importer Firebase Storage
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 const Card = ({ card, laneId, onUpdateCard, onDeleteCard }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(card.title);
   const [editedDescription, setEditedDescription] = useState(card.description);
   const [editedPriority, setEditedPriority] = useState(card.priority);
-  const [file, setFile] = useState(card.file);
+  const [file, setFile] = useState(null);
+  const [fileURL, setFileURL] = useState(card.fileURL || '');
   const [users, setUsers] = useState([]);
   const [assignedUser, setAssignedUser] = useState(card.assignedUser || '');
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     setEditedTitle(card.title);
     setEditedDescription(card.description);
     setEditedPriority(card.priority);
-    setFile(card.file);
+    setFileURL(card.fileURL || '');
     setAssignedUser(card.assignedUser || '');
 
-    // Récupérer les utilisateurs lors du montage du composant
     const fetchUsers = async () => {
       const usersList = await getUsers();
       setUsers(usersList);
@@ -27,9 +30,40 @@ const Card = ({ card, laneId, onUpdateCard, onDeleteCard }) => {
     fetchUsers();
   }, [card]);
 
-  const handleSave = () => {
-    onUpdateCard(laneId, card.id, editedTitle, editedDescription, editedPriority, file, assignedUser);
-    setIsEditing(false);
+  const handleSave = async () => {
+    console.log('handleSave called');
+    setErrorMessage('');
+    let updatedFileURL = fileURL;
+
+    if (file) {
+      try {
+        console.log('Uploading file:', file.name);
+        const fileRef = ref(storage, `files/${file.name}`);
+        await uploadBytes(fileRef, file);
+        console.log('File uploaded successfully');
+        updatedFileURL = await getDownloadURL(fileRef);
+        console.log('File URL:', updatedFileURL);
+      } catch (error) {
+        console.error('Error uploading file:', error);
+        setErrorMessage('Error uploading file: ' + error.message);
+        return;
+      }
+    }
+
+    try {
+      console.log('Updating card with:', {
+        editedTitle,
+        editedDescription,
+        editedPriority,
+        updatedFileURL,
+        assignedUser
+      });
+      await onUpdateCard(laneId, card.id, editedTitle, editedDescription, editedPriority, updatedFileURL, assignedUser);
+      setIsEditing(false); // Ferme le formulaire d'édition après la sauvegarde
+    } catch (error) {
+      console.error('Error updating card:', error);
+      setErrorMessage('Error updating card: ' + error.message);
+    }
   };
 
   const handleFileChange = (e) => {
@@ -69,17 +103,17 @@ const Card = ({ card, laneId, onUpdateCard, onDeleteCard }) => {
             ))}
           </select>
           <button onClick={handleSave}>Save</button>
+          <button onClick={() => setIsEditing(false)}>Cancel</button>
+          {errorMessage && <p className="error-message">{errorMessage}</p>}
         </>
       ) : (
         <>
           <h5>{card.title}</h5>
           <p>{card.description}</p>
           <span>{card.priority}</span>
-          {file && (
+          {fileURL && (
             <div className="file-preview">
-              <a href={URL.createObjectURL(file)} target="_blank" rel="noopener noreferrer">
-                <FaUpload /> {file.name}
-              </a>
+              <img src={fileURL} alt="Uploaded file" style={{ width: '100%', height: 'auto' }} />
             </div>
           )}
           {assignedUser && <p>Assigné à : {assignedUser}</p>}

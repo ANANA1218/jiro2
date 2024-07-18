@@ -126,11 +126,21 @@ const Board = () => {
   };
 
   // Utiliser la fonction existante pour inclure la mise à jour de l'utilisateur assigné
-  const onUpdateCard = async (laneId, cardId, updatedTitle, updatedDescription, updatedPriority, updatedFile, updatedUser) => {
+  const onUpdateCard = async (laneId, cardId, updatedTitle, updatedDescription, updatedPriority, updatedFileURL, updatedUser) => {
+    console.log('onUpdateCard called with:', {
+      laneId,
+      cardId,
+      updatedTitle,
+      updatedDescription,
+      updatedPriority,
+      updatedFileURL,
+      updatedUser
+    });
+  
     try {
       const laneRef = doc(db, 'lanes', laneId);
       const laneDoc = await getDoc(laneRef);
-
+  
       if (laneDoc.exists()) {
         const updatedCards = laneDoc.data().cards.map(card => {
           if (card.id === cardId) {
@@ -139,13 +149,13 @@ const Board = () => {
               title: updatedTitle,
               description: updatedDescription,
               priority: updatedPriority,
-              file: updatedFile,
+              fileURL: updatedFileURL, // Mise à jour de l'URL du fichier
               assignedUser: updatedUser // Mise à jour de l'utilisateur assigné
             };
           }
           return card;
         });
-
+  
         await updateDoc(laneRef, { cards: updatedCards });
         setLanes(lanes.map(lane => (lane.id === laneId ? { ...lane, cards: updatedCards } : lane)));
         console.log(`Updated card "${cardId}" in lane "${laneId}" in Firestore`);
@@ -154,8 +164,14 @@ const Board = () => {
       }
     } catch (error) {
       console.error('Error updating card:', error);
+      throw error; // Rejeter l'erreur pour que handleSave puisse la gérer
     }
   };
+  
+  
+  
+  
+  
 
   const onDeleteCard = async (laneId, cardId) => {
     try {
