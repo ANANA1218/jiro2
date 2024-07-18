@@ -125,3 +125,14 @@ footer {
   background-color: black;
   color: white;
 }
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-size: cover;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+
+.App {
+  background-image: var(--background-image);
+}
