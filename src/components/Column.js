@@ -10,6 +10,7 @@ const Column = ({ lane, onUpdateLaneTitle, onCreateCard, onUpdateCard, onDeleteC
   const [newCardDescription, setNewCardDescription] = useState('');
   const [newCardPriority, setNewCardPriority] = useState('Low');
   const [newCardAssignedTo, setNewCardAssignedTo] = useState('');
+  const [newCardPicture, setNewCardPicture] = useState('');
   const [showColorOptions, setShowColorOptions] = useState(false);
   const [showNewCardForm, setShowNewCardForm] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
@@ -28,17 +29,29 @@ const Column = ({ lane, onUpdateLaneTitle, onCreateCard, onUpdateCard, onDeleteC
       alert('Card title cannot be empty!');
       return;
     }
-    onCreateCard(lane.id, newCardTitle, newCardDescription, newCardPriority, newCardAssignedTo);
+    onCreateCard(lane.id, newCardTitle, newCardDescription, newCardPriority, newCardAssignedTo, newCardPicture);
     setNewCardTitle('');
     setNewCardDescription('');
     setNewCardPriority('Low');
     setNewCardAssignedTo(currentUser); // Reset to the current user after creation
+    setNewCardPicture('');
     setShowNewCardForm(false);
   };
 
   const handleColorChange = (color) => {
     onUpdateLaneColor(lane.id, color);
     setShowColorOptions(false);
+  };
+
+  const handlePictureChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setNewCardPicture(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   return (
@@ -113,6 +126,12 @@ const Column = ({ lane, onUpdateLaneTitle, onCreateCard, onUpdateCard, onDeleteC
             placeholder="Assigned to"
             value={newCardAssignedTo}
             onChange={(e) => setNewCardAssignedTo(e.target.value)}
+            className="form-control mb-2"
+          />
+          <input
+            type="file"
+            onChange={handlePictureChange}
+            accept="image/*"
             className="form-control mb-2"
           />
           <button className="btn btn-primary" onClick={handleCreateCard}>

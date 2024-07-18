@@ -98,7 +98,7 @@ const handleDeleteLane = async (laneId) => {
     }
 };
 
-const handleCreateCard = async (laneId, cardTitle, cardDescription, cardPriority,cardAssignedTo) => {
+const handleCreateCard = async (laneId, cardTitle, cardDescription, cardPriority,cardAssignedTo,cardPicture) => {
   try {
       const laneRef = doc(db, `boards/${effectiveBoardId}/lanes`, laneId);
       const laneDoc = await getDoc(laneRef);
@@ -111,7 +111,8 @@ const handleCreateCard = async (laneId, cardTitle, cardDescription, cardPriority
               description: cardDescription,
               label: currentDate,
               priority: cardPriority,
-              assignedto:cardAssignedTo
+              assignedto:cardAssignedTo,
+              picture:cardPicture
           };
 
           const updatedCards = [...laneDoc.data().cards, newCard];
@@ -124,7 +125,7 @@ const handleCreateCard = async (laneId, cardTitle, cardDescription, cardPriority
   }
 };
 
-const handleUpdateCard = async (laneId, cardId, updatedTitle, updatedDescription, updatedLabel, updatedPriority,updatedAssignedTo) => {
+const handleUpdateCard = async (laneId, cardId, updatedTitle, updatedDescription, updatedLabel, updatedPriority,updatedAssignedTo, updatedPicture) => {
   try {
       const laneRef = doc(db, `boards/${effectiveBoardId}/lanes`, laneId);
       const laneDoc = await getDoc(laneRef);
@@ -138,7 +139,8 @@ const handleUpdateCard = async (laneId, cardId, updatedTitle, updatedDescription
                       description: updatedDescription,
                       label: updatedLabel,
                       priority: updatedPriority,
-                      assignedto:updatedAssignedTo
+                      assignedto:updatedAssignedTo,
+                      picture:updatedPicture
                   };
               }
               return card;

@@ -9,6 +9,8 @@ const Card = ({ card, laneId, onUpdateCard, onDeleteCard, onDragStart }) => {
   const [editedDescription, setEditedDescription] = useState(card.description);
   const [editedPriority, setEditedPriority] = useState(card.priority);
   const [editedAssignedTo, setEditedAssignedTo] = useState(card.assignedTo);
+  const [editedPicture, setEditedPicture] = useState(card.picture);
+  const [isImageExpanded, setIsImageExpanded] = useState(false); // State to track if image is expanded
   const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
@@ -23,8 +25,27 @@ const Card = ({ card, laneId, onUpdateCard, onDeleteCard, onDragStart }) => {
   }, [card.assignedTo]);
 
   const handleSave = () => {
-    onUpdateCard(laneId, card.id, editedTitle, editedDescription, editedPriority, editedAssignedTo);
+    onUpdateCard(laneId, card.id, editedTitle, editedDescription, editedPriority, editedAssignedTo, editedPicture);
     setIsEditing(false);
+  };
+
+  const handlePictureChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setEditedPicture(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const toggleImageExpand = () => {
+    setIsImageExpanded(!isImageExpanded);
+  };
+
+  const closeExpandedImage = () => {
+    setIsImageExpanded(false);
   };
 
   return (
@@ -60,6 +81,27 @@ const Card = ({ card, laneId, onUpdateCard, onDeleteCard, onDragStart }) => {
             onChange={(e) => setEditedAssignedTo(e.target.value)}
             placeholder="Assigned To"
           />
+          <input
+            type="file"
+            onChange={handlePictureChange}
+            accept="image/*"
+          />
+          {editedPicture && (
+            <>
+              {isImageExpanded ? (
+                <div className="expanded-picture-container" onClick={closeExpandedImage}>
+                  <img src={editedPicture} alt="Expanded Card" className="expanded-picture" />
+                </div>
+              ) : (
+                <img
+                  src={editedPicture}
+                  alt="Card"
+                  className={`card-picture`}
+                  onClick={toggleImageExpand} // Enable click to expand image
+                />
+              )}
+            </>
+          )}
           <button onClick={handleSave}>Save</button>
         </>
       ) : (
@@ -68,6 +110,22 @@ const Card = ({ card, laneId, onUpdateCard, onDeleteCard, onDragStart }) => {
           <p>{card.description}</p>
           <span>{card.priority}</span>
           <p>Assigned to: {card.assignedto}</p>
+          {card.picture && (
+            <>
+              {isImageExpanded ? (
+                <div className="expanded-picture-container" onClick={closeExpandedImage}>
+                  <img src={card.picture} alt="Expanded Card" className="expanded-picture" />
+                </div>
+              ) : (
+                <img
+                  src={card.picture}
+                  alt="Card"
+                  className={`card-picture`}
+                  onClick={toggleImageExpand} // Enable click to expand image
+                />
+              )}
+            </>
+          )}
           <div className="card-footer">
             <button onClick={() => setIsEditing(true)}>
               <FaPencilAlt />
