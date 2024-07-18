@@ -1,194 +1,116 @@
 body {
-  font-family: Arial, sans-serif;
   margin: 0;
-  padding: 0;
-  background-color: #FFFFD1; /* Fond Principal */
+  font-family: Arial, sans-serif;
+  background: url('C:/Users/ing/Documents/M1_DEV/jiro2/public/yelloback.png') no-repeat center center fixed;
+  background-size: cover;
 }
 
-.container {
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.8); /* Ajouter un fond blanc semi-transparent pour le contenu */
-  border-radius: 10px;
+.navbar, .sidebar {
+  background-color: #fff9db !important; /* pastel yellow */
 }
 
-.navbar {
-  background-color: #FFFFD1 !important; /* Couleur de fond de la navbar */
-  color: #333333; /* Couleur du texte */
-}
-
-.navbar .MuiTypography-root, .navbar .MuiButton-root, .navbar .MuiIconButton-root {
-  color: #333333 !important; /* Couleur du texte et des icônes */
-}
-
-.column-card {
-  background-color: #F0F4F8; /* Fond des Colonnes */
-  padding: 10px;
-  margin: 10px 0;
-}
-
-.card-item {
-  margin: 10px 0;
-  background-color: #FFFFFF; /* Fond des Cartes */
-  border: 1px solid #CCCCCC; /* Bordure des Cartes */
-  border-radius: 5px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.button-primary {
-  background-color: #BEE1E6; /* Bouton Principal */
-  color: #333333;
-  border: 1px solid #ADD8E6;
-}
-
-.button-secondary {
-  background-color: #D3E4CD; /* Bouton Secondaire */
-  color: #333333;
-  border: 1px solid #A3D2CA;
-}
-
-.button-success {
-  background-color: #A3D2CA; /* Bouton de Succès */
-  color: #333333;
-  border: 1px solid #85B8B0;
-}
-
-.button-alert {
-  background-color: #F4A7B9; /* Bouton d'Alerte */
-  color: #333333;
-  border: 1px solid #FFCCF9;
-}
-
-.auth-container {
-  max-width: 400px;
-  margin: 50px auto;
-  padding: 20px;
-  border: 1px solid #CCCCCC;
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  background-color: rgba(255, 255, 255, 0.9); /* Changer le fond pour être semi-transparent */
-}
-
-.auth-container h2 {
-  text-align: center;
-  color: #333333;
-}
-
-.form-group {
-  margin-bottom: 15px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 5px;
-  color: #666666;
-}
-
-.form-group input {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #CCCCCC;
-  border-radius: 5px;
-  background-color: #FAFAFA;
-}
-
-.form-group input:focus {
-  border-color: #A3D2CA;
-  outline: none;
-}
-
-.btn-auth {
-  width: 100%;
-  padding: 10px;
-  background-color: #A3D2CA;
-  color: #FFFFFF;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-.btn-auth:hover {
-  background-color: #85B8B0;
-}
-
-.error-message {
-  color: #F4A7B9; /* Message d'erreur */
-  text-align: center;
-}
-
-.success-message {
-  color: #A3D2CA; /* Message de succès */
-  text-align: center;
-}
-
-.footer {
-  padding: 1rem 0;
-  text-align: center;
-  background-color: rgba(0, 0, 0, 0.8);
-  color: #FFFFFF;
-}
-/* src/App.css */
-.App {
-  text-align: center;
-}
-
-.App-body {
+.board-container {
   display: flex;
-  justify-content: center;
-  align-items: center;
   flex-direction: column;
-}
-
-.navbar {
-  display: flex;
-  justify-content: center;
   align-items: center;
-}
-/* Global Styles */
-body {
-  margin: 0;
-  padding: 0;
-  font-family: Arial, sans-serif;
+  padding-top: 20px;
 }
 
-.container-fluid {
-  padding: 20px;
-}
-
-.row {
+.board-header {
   display: flex;
-  flex-wrap: wrap;
   justify-content: space-between;
+  width: 80%;
+  margin-bottom: 20px;
 }
 
-.col-md-4 {
-  flex: 1 1 100%;
-  max-width: 100%;
-  padding: 0 10px;
+.board-header .form-group {
+  flex: 1;
+  margin: 0 10px;
 }
 
-@media (min-width: 768px) {
-  .col-md-4 {
-    flex: 1 1 31%;
-    max-width: 31%;
-  }
-}
-
-.form-control {
+.board {
+  display: flex;
+  overflow-x: auto;
   width: 100%;
+  padding: 10px;
+}
+
+.lane {
+  min-width: 300px;
+  background-color: #ffeef2; /* light pastel pink */
+  margin: 0 10px;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.card {
+  background-color: #f9f7f7;
+  border: 1px solid #e0e0e0;
   padding: 10px;
   margin-bottom: 10px;
+  border-radius: 5px;
 }
 
-.btn-primary {
-  width: 100%;
+footer {
+  text-align: center;
   padding: 10px;
-  background-color: #007bff;
-  border: none;
-  color: white;
-  cursor: pointer;
+  font-size: 14px;
+  background: none; /* remove background */
+  color: black; /* text color */
 }
 
-.btn-primary:hover {
-  background-color: #0056b3;
+.footer-container {
+  display: flex;
+  justify-content: center;
+}
+
+.navbar-logo {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.navbar-logo img {
+  height: 80px; /* Adjust the size as needed */
+}
+
+.navbar-links {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  margin-left: auto;
+}
+
+.navbar-links a {
+  color: #0038ff;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.sidebar-button {
+  color: #0038ff !important; /* Apply the same blue color */
+}
+
+@media (max-width: 768px) {
+  .navbar-toolbar {
+    flex-direction: column;
+  }
+
+  .navbar-links {
+    order: 1;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .navbar-logo {
+    order: 2;
+  }
+
+  .navbar-logo img {
+    height: 60px; /* Adjust the size for smaller screens */
+  }
+
+  .MuiIconButton-root {
+    order: 3;
+  }
 }

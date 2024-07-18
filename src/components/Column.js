@@ -16,7 +16,7 @@ const Column = ({ lane, onUpdateLaneTitle, onCreateCard, onUpdateCard, onDeleteC
       alert('Card title cannot be empty!');
       return;
     }
-    onCreateCard(lane.id, newCardTitle, newCardDescription, newCardPriority);
+    onCreateCard(lane.id, newCardTitle, newCardDescription, newCardPriority, null);
     setNewCardTitle('');
     setNewCardDescription('');
     setNewCardPriority('Low');
@@ -28,8 +28,17 @@ const Column = ({ lane, onUpdateLaneTitle, onCreateCard, onUpdateCard, onDeleteC
     setShowColorOptions(false);
   };
 
+  const handleDrop = (e) => {
+    e.preventDefault();
+    const files = e.dataTransfer.files;
+    // Assuming files[0] is the file to be added
+    if (files.length > 0) {
+      onCreateCard(lane.id, newCardTitle, newCardDescription, newCardPriority, files[0]);
+    }
+  };
+
   return (
-    <div className="column" style={{ backgroundColor: lane.color }}>
+    <div className="column" style={{ backgroundColor: lane.color }} onDrop={handleDrop} onDragOver={(e) => e.preventDefault()}>
       <div className="lane-header">
         <input
           type="text"
