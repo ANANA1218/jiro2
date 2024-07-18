@@ -5,7 +5,6 @@ import { useParams } from 'react-router-dom';
 import { db } from './Firebase';
 import { collection, getDocs, updateDoc, doc,getDoc,addDoc, deleteDoc } from 'firebase/firestore';
 import Lane from './Column';
-import { colors } from './colorOptions';
 
 const Board = () => {
   const [lanes, setLanes] = useState([]);
