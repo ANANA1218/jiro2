@@ -143,53 +143,51 @@ const handleUpdateCard = async (laneId, cardId, updatedTitle, updatedDescription
     }
 };*/
 
-const handleDragStart = (e, cardId) => {
+const handleDragStart = (e, cardId, laneId) => {
     e.dataTransfer.setData('cardId', cardId);
+    e.dataTransfer.setData('laneId', laneId);
 };
 
 const handleDragOver = (e) => {
     e.preventDefault();
 };
 
-const handleDrop = async (e, cardId, sourceLaneId, targetLaneId) => {
-    e.preventDefault();
+const handleDrop = async (e, targetLaneId) => {
+  const cardId = e.dataTransfer.getData('cardId');
+  const sourceLaneId = e.dataTransfer.getData('laneId');
+
+  if (sourceLaneId !== targetLaneId) {
     const sourceLane = lanes.find(lane => lane.id === sourceLaneId);
     const targetLane = lanes.find(lane => lane.id === targetLaneId);
 
-    if (sourceLane && targetLane) {
-        const cardToMove = sourceLane.cards.find(card => card.id === cardId);
-        let updatedSourceCards = [...sourceLane.cards];
-        let updatedTargetCards = [...targetLane.cards];
+    const cardToMove = sourceLane.cards.find(card => card.id === cardId);
 
-        if (sourceLaneId !== targetLaneId) {
-            updatedSourceCards = sourceLane.cards.filter(card => card.id !== cardId);
-            updatedTargetCards = [...targetLane.cards, cardToMove];
-        } else {
-            const sourceIndex = sourceLane.cards.findIndex(card => card.id === cardId);
-            updatedTargetCards = [...sourceLane.cards];
-            updatedTargetCards.splice(sourceIndex, 1);
-            updatedTargetCards.splice(e.dataTransfer.getData('index'), 0, cardToMove);
-        }
+    const updatedSourceLaneCards = sourceLane.cards.filter(card => card.id !== cardId);
+    const updatedTargetLaneCards = [...targetLane.cards, cardToMove];
 
-        try {
-            await updateDoc(doc(db, `boards/${effectiveBoardId}/lanes`, sourceLaneId), { cards: updatedSourceCards });
-            await updateDoc(doc(db, `boards/${effectiveBoardId}/lanes`, targetLaneId), { cards: updatedTargetCards });
-            console.log(`Moved card "${cardId}" from lane "${sourceLaneId}" to lane "${targetLaneId}"`);
-            setLanes(lanes.map(lane => {
-                if (lane.id === sourceLaneId) {
-                    return { ...lane, cards: updatedSourceCards };
-                }
-                if (lane.id === targetLaneId) {
-                    return { ...lane, cards: updatedTargetCards };
-                }
-                return lane;
-            }));
-        } catch (error) {
-            console.error('Error moving card:', error);
-        }
+    const updatedLanes = lanes.map(lane => {
+      if (lane.id === sourceLaneId) {
+        return { ...lane, cards: updatedSourceLaneCards };
+      }
+      if (lane.id === targetLaneId) {
+        return { ...lane, cards: updatedTargetLaneCards };
+      }
+      return lane;
+    });
+
+    setLanes(updatedLanes);
+
+    try {
+      const sourceLaneRef = doc(db, `boards/${effectiveBoardId}/lanes/${sourceLaneId}`);
+      await updateDoc(sourceLaneRef, { cards: updatedSourceLaneCards });
+
+      const targetLaneRef = doc(db, `boards/${effectiveBoardId}/lanes/${targetLaneId}`);
+      await updateDoc(targetLaneRef, { cards: updatedTargetLaneCards });
+    } catch (error) {
+      console.error('Error updating lanes after card drop:', error);
     }
+  }
 };
-
 
 
 

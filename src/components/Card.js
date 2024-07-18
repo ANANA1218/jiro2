@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './Card.css';
 import { FaTrash, FaPencilAlt } from 'react-icons/fa';
 
-const Card = ({ card, laneId, onUpdateCard, onDeleteCard }) => {
+const Card = ({ card, laneId, onUpdateCard, onDeleteCard, onDragStart }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(card.title);
   const [editedDescription, setEditedDescription] = useState(card.description);
@@ -14,7 +14,12 @@ const Card = ({ card, laneId, onUpdateCard, onDeleteCard }) => {
   };
 
   return (
-    <div className="card" style={{ backgroundColor: getColorByPriority(card.priority) }}>
+    <div
+      className="card"
+      style={{ backgroundColor: getColorByPriority(card.priority) }}
+      draggable
+      onDragStart={(e) => onDragStart(e, card.id, laneId)}
+    >
       {isEditing ? (
         <>
           <input

@@ -4,7 +4,7 @@ import { FaPlus, FaTrash, FaPalette } from 'react-icons/fa';
 import Card from './Card';
 import { colors } from './colorOptions';
 
-const Column = ({ lane, onUpdateLaneTitle, onCreateCard, onUpdateCard, onDeleteCard, onDeleteLane, onUpdateLaneColor }) => {
+const Column = ({ lane, onUpdateLaneTitle, onCreateCard, onUpdateCard, onDeleteCard, onDeleteLane, onUpdateLaneColor, onDragStart, onDragOver, onDrop }) => {
   const [newCardTitle, setNewCardTitle] = useState('');
   const [newCardDescription, setNewCardDescription] = useState('');
   const [newCardPriority, setNewCardPriority] = useState('Low');
@@ -29,7 +29,12 @@ const Column = ({ lane, onUpdateLaneTitle, onCreateCard, onUpdateCard, onDeleteC
   };
 
   return (
-    <div className="column" style={{ backgroundColor: lane.color }}>
+    <div
+      className="column"
+      style={{ backgroundColor: lane.color }}
+      onDragOver={(e) => onDragOver(e)}
+      onDrop={(e) => onDrop(e, lane.id)}
+    >
       <div className="lane-header">
         <input
           type="text"
@@ -61,6 +66,7 @@ const Column = ({ lane, onUpdateLaneTitle, onCreateCard, onUpdateCard, onDeleteC
             laneId={lane.id}
             onUpdateCard={onUpdateCard}
             onDeleteCard={onDeleteCard}
+            onDragStart={onDragStart}
           />
         ))}
       </div>
