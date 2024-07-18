@@ -35,7 +35,7 @@ const Profile = () => {
     }, []);
 
     if (!user) {
-        return <div>Loading...</div>; // Afficher un message de chargement tant que l'authentification est en cours
+        return <div>Loading...</div>; 
     }
 
     return (
