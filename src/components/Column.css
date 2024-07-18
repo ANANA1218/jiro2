@@ -106,25 +106,28 @@
 .add-card-btn:hover {
   color: #007bff;
 }
-/* Column.css */
-
-
-  /* Column.css */
-
-.lane-title {
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    color: rgb(0, 0, 0); /* Vous pouvez ajuster la couleur du texte si nécessaire */
-    font-weight: bold;
-    text-align: center;
+/* Ajout de transitions pour les colonnes */
+.lane {
+    transition: opacity 0.3s ease, transform 0.3s ease;
   }
   
-  /* Assurez-vous que les autres styles de la colonne sont bien définis */
-  .lane {
-    min-width: 300px;
-    margin: 0 10px;
-    padding: 10px;
-    border-radius: 5px;
+  .lane-enter {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  
+  .lane-enter-active {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .lane-exit {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .lane-exit-active {
+    opacity: 0;
+    transform: translateY(-20px);
   }
   

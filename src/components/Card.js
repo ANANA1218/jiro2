@@ -4,6 +4,8 @@ import { FaTrash, FaPencilAlt } from 'react-icons/fa';
 import { getUsers } from './Firebase';
 import { storage } from './Firebase'; // Importer Firebase Storage
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Card = ({ card, laneId, onUpdateCard, onDeleteCard }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -46,6 +48,7 @@ const Card = ({ card, laneId, onUpdateCard, onDeleteCard }) => {
       } catch (error) {
         console.error('Error uploading file:', error);
         setErrorMessage('Error uploading file: ' + error.message);
+        toast.error('Error uploading file: ' + error.message);
         return;
       }
     }
@@ -60,9 +63,11 @@ const Card = ({ card, laneId, onUpdateCard, onDeleteCard }) => {
       });
       await onUpdateCard(laneId, card.id, editedTitle, editedDescription, editedPriority, updatedFileURL, assignedUser);
       setIsEditing(false); // Ferme le formulaire d'édition après la sauvegarde
+      toast.success('Card updated successfully!');
     } catch (error) {
       console.error('Error updating card:', error);
       setErrorMessage('Error updating card: ' + error.message);
+      toast.error('Error updating card: ' + error.message);
     }
   };
 
@@ -71,11 +76,12 @@ const Card = ({ card, laneId, onUpdateCard, onDeleteCard }) => {
   };
 
   return (
-    <div className="card" style={{ backgroundColor: getColorByPriority(editedPriority) }}>
+    <div className="card" style={{ backgroundColor: getColorByPriority(editedPriority) }} role="article" aria-labelledby={`card-title-${card.id}`}>
       {isEditing ? (
         <>
           <input
             type="text"
+            id={`card-title-${card.id}`}
             value={editedTitle}
             onChange={(e) => setEditedTitle(e.target.value)}
           />
@@ -108,7 +114,7 @@ const Card = ({ card, laneId, onUpdateCard, onDeleteCard }) => {
         </>
       ) : (
         <>
-          <h5>{card.title}</h5>
+          <h5 id={`card-title-${card.id}`}>{card.title}</h5>
           <p>{card.description}</p>
           <span>{card.priority}</span>
           {fileURL && (
@@ -118,15 +124,16 @@ const Card = ({ card, laneId, onUpdateCard, onDeleteCard }) => {
           )}
           {assignedUser && <p>Assigné à : {assignedUser}</p>}
           <div className="card-footer">
-            <button onClick={() => setIsEditing(true)}>
+            <button onClick={() => setIsEditing(true)} aria-label={`Edit card ${card.title}`}>
               <FaPencilAlt />
             </button>
-            <button onClick={() => onDeleteCard(laneId, card.id)}>
+            <button onClick={() => onDeleteCard(laneId, card.id)} aria-label={`Delete card ${card.title}`}>
               <FaTrash />
             </button>
           </div>
         </>
       )}
+      <ToastContainer />
     </div>
   );
 };

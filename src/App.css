@@ -114,3 +114,13 @@ footer {
     order: 3;
   }
 }
+/* Définir les styles pour les thèmes clair et sombre */
+.app.light {
+  background-color: white;
+  color: black;
+}
+
+.app.dark {
+  background-color: black;
+  color: white;
+}
