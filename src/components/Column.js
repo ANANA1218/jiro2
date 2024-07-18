@@ -1,25 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Column.css';
 import { FaPlus, FaTrash, FaPalette } from 'react-icons/fa';
 import Card from './Card';
 import { colors } from './colorOptions';
+import { getAuth } from 'firebase/auth';
 
 const Column = ({ lane, onUpdateLaneTitle, onCreateCard, onUpdateCard, onDeleteCard, onDeleteLane, onUpdateLaneColor, onDragStart, onDragOver, onDrop }) => {
   const [newCardTitle, setNewCardTitle] = useState('');
   const [newCardDescription, setNewCardDescription] = useState('');
   const [newCardPriority, setNewCardPriority] = useState('Low');
+  const [newCardAssignedTo, setNewCardAssignedTo] = useState('');
   const [showColorOptions, setShowColorOptions] = useState(false);
   const [showNewCardForm, setShowNewCardForm] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (user) {
+      setCurrentUser(user.email); // Assuming you want to use the email as the identifier
+      setNewCardAssignedTo(user.email); // Set the default assigned user
+    }
+  }, []);
 
   const handleCreateCard = () => {
     if (newCardTitle.trim() === '') {
       alert('Card title cannot be empty!');
       return;
     }
-    onCreateCard(lane.id, newCardTitle, newCardDescription, newCardPriority);
+    onCreateCard(lane.id, newCardTitle, newCardDescription, newCardPriority, newCardAssignedTo);
     setNewCardTitle('');
     setNewCardDescription('');
     setNewCardPriority('Low');
+    setNewCardAssignedTo(currentUser); // Reset to the current user after creation
     setShowNewCardForm(false);
   };
 
@@ -95,6 +108,13 @@ const Column = ({ lane, onUpdateLaneTitle, onCreateCard, onUpdateCard, onDeleteC
             <option value="High">High</option>
             <option value="Critical">Critical</option>
           </select>
+          <input
+            type="text"
+            placeholder="Assigned to"
+            value={newCardAssignedTo}
+            onChange={(e) => setNewCardAssignedTo(e.target.value)}
+            className="form-control mb-2"
+          />
           <button className="btn btn-primary" onClick={handleCreateCard}>
             Add Card
           </button>
