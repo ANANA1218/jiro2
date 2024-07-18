@@ -96,7 +96,7 @@
   }
   
   .navbar-logo-img {
-    height: 80px; /* Increase the height for a larger logo */
+    height: 120px; /* Increase the height for a larger logo */
   }
   
   .navbar-links {
@@ -132,7 +132,7 @@
     }
   
     .navbar-logo-img {
-      height: 60px; /* Adjust the size for smaller screens */
+      height: 200px; /* Adjust the size for smaller screens */
     }
   
     .MuiIconButton-root {

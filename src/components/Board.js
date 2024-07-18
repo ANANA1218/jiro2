@@ -11,6 +11,7 @@ const Board = () => {
   const [newLaneTitle, setNewLaneTitle] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [filterPriority, setFilterPriority] = useState('All');
+  const [users, setUsers] = useState([]); // Définir l'état `users`
 
   useEffect(() => {
     const fetchLanes = async () => {
@@ -36,7 +37,7 @@ const Board = () => {
 
     const fetchUsers = async () => {
       const usersList = await getUsers();
-      setUsers(usersList);
+      setUsers(usersList); // Utiliser `setUsers` pour mettre à jour l'état des utilisateurs
     };
 
     fetchLanes();
@@ -123,7 +124,17 @@ const Board = () => {
     }
   };
 
-  const onUpdateCard = async (laneId, cardId, updatedTitle, updatedDescription, updatedLabel) => {
+  const onUpdateCard = async (laneId, cardId, updatedTitle, updatedDescription, updatedPriority, updatedFileURL, updatedUser) => {
+    console.log('onUpdateCard called with:', {
+      laneId,
+      cardId,
+      updatedTitle,
+      updatedDescription,
+      updatedPriority,
+      updatedFileURL,
+      updatedUser
+    });
+
     try {
       const laneRef = doc(db, 'lanes', laneId);
       const laneDoc = await getDoc(laneRef);
@@ -135,7 +146,9 @@ const Board = () => {
               ...card,
               title: updatedTitle,
               description: updatedDescription,
-              label: updatedLabel
+              priority: updatedPriority,
+              fileURL: updatedFileURL,
+              assignedUser: updatedUser
             };
           }
           return card;
@@ -149,10 +162,11 @@ const Board = () => {
       }
     } catch (error) {
       console.error('Error updating card:', error);
+      throw error;
     }
   };
 
-  const handleDeleteCard = async (laneId, cardId) => {
+  const onDeleteCard = async (laneId, cardId) => {
     try {
       const laneRef = doc(db, 'lanes', laneId);
       const laneDoc = await getDoc(laneRef);
@@ -190,14 +204,6 @@ const Board = () => {
       try {
         await updateDoc(doc(db, 'lanes', sourceLane.id), { cards: updatedSourceCards });
         await updateDoc(doc(db, 'lanes', targetLane.id), { cards: updatedTargetCards });
-        setLanes(lanes.map(lane => {
-          if (lane.id === sourceLaneId) {
-            return { ...lane, cards: updatedSourceCards };
-          } else if (lane.id === targetLaneId) {
-            return { ...lane, cards: updatedTargetCards };
-          }
-          return lane;
-        }));
         console.log(`Moved card "${cardId}" from lane "${sourceLane.id}" to lane "${targetLane.id}"`);
       } catch (error) {
         console.error('Error moving card:', error);
@@ -260,7 +266,7 @@ const Board = () => {
             onUpdateLaneTitle={handleUpdateLaneTitle}
             onCreateCard={onCreateCard}
             onUpdateCard={onUpdateCard}
-            onDeleteCard={handleDeleteCard}
+            onDeleteCard={onDeleteCard}
             onDeleteLane={handleDeleteLane}
             onDragStart={handleDragStart}
             onDragOver={handleDragOver}
