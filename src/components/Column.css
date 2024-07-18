@@ -106,3 +106,25 @@
 .add-card-btn:hover {
   color: #007bff;
 }
+/* Column.css */
+
+
+  /* Column.css */
+
+.lane-title {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    color: rgb(0, 0, 0); /* Vous pouvez ajuster la couleur du texte si nécessaire */
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  /* Assurez-vous que les autres styles de la colonne sont bien définis */
+  .lane {
+    min-width: 300px;
+    margin: 0 10px;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  

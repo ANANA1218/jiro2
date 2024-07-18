@@ -1,10 +1,9 @@
-// Board.js
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Board.css';
-import { db, getUsers } from './Firebase'; // Importer getUsers
+import { db, getUsers } from './Firebase';
 import { collection, getDocs, setDoc, doc, onSnapshot, deleteDoc, getDoc, updateDoc } from 'firebase/firestore';
-import Lane from './Column';
+import Column from './Column';
 import { colors } from './colorOptions';
 
 const Board = () => {
@@ -57,7 +56,7 @@ const Board = () => {
       const newLaneRef = doc(collection(db, 'lanes'));
       const newLane = {
         title: newLaneTitle,
-        color: colors[0],
+        color: colors[Math.floor(Math.random() * colors.length)], // Assigner une couleur aléatoire
         cards: []
       };
 
@@ -112,7 +111,7 @@ const Board = () => {
           description: cardDescription,
           priority: cardPriority,
           label: currentDate,
-          assignedUser: assignedUser || '' // Ajout de l'utilisateur assigné
+          assignedUser: assignedUser || ''
         };
 
         const updatedCards = [...laneDoc.data().cards, newCard];
@@ -125,7 +124,6 @@ const Board = () => {
     }
   };
 
-  // Utiliser la fonction existante pour inclure la mise à jour de l'utilisateur assigné
   const onUpdateCard = async (laneId, cardId, updatedTitle, updatedDescription, updatedPriority, updatedFileURL, updatedUser) => {
     console.log('onUpdateCard called with:', {
       laneId,
@@ -136,11 +134,11 @@ const Board = () => {
       updatedFileURL,
       updatedUser
     });
-  
+
     try {
       const laneRef = doc(db, 'lanes', laneId);
       const laneDoc = await getDoc(laneRef);
-  
+
       if (laneDoc.exists()) {
         const updatedCards = laneDoc.data().cards.map(card => {
           if (card.id === cardId) {
@@ -149,13 +147,13 @@ const Board = () => {
               title: updatedTitle,
               description: updatedDescription,
               priority: updatedPriority,
-              fileURL: updatedFileURL, // Mise à jour de l'URL du fichier
-              assignedUser: updatedUser // Mise à jour de l'utilisateur assigné
+              fileURL: updatedFileURL,
+              assignedUser: updatedUser
             };
           }
           return card;
         });
-  
+
         await updateDoc(laneRef, { cards: updatedCards });
         setLanes(lanes.map(lane => (lane.id === laneId ? { ...lane, cards: updatedCards } : lane)));
         console.log(`Updated card "${cardId}" in lane "${laneId}" in Firestore`);
@@ -164,14 +162,9 @@ const Board = () => {
       }
     } catch (error) {
       console.error('Error updating card:', error);
-      throw error; // Rejeter l'erreur pour que handleSave puisse la gérer
+      throw error;
     }
   };
-  
-  
-  
-  
-  
 
   const onDeleteCard = async (laneId, cardId) => {
     try {
@@ -267,12 +260,12 @@ const Board = () => {
       </div>
       <div className="board">
         {filteredLanes.map(lane => (
-          <Lane
+          <Column
             key={lane.id}
             lane={lane}
             onUpdateLaneTitle={handleUpdateLaneTitle}
             onCreateCard={onCreateCard}
-            onUpdateCard={onUpdateCard} // Utiliser la fonction mise à jour
+            onUpdateCard={onUpdateCard}
             onDeleteCard={onDeleteCard}
             onDeleteLane={handleDeleteLane}
             onDragStart={handleDragStart}

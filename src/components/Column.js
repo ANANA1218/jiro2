@@ -39,12 +39,13 @@ const Column = ({ lane, onUpdateLaneTitle, onCreateCard, onUpdateCard, onDeleteC
   return (
     <div className="column" style={{ backgroundColor: lane.color }} onDrop={handleDrop} onDragOver={(e) => e.preventDefault()}>
       <div className="lane-header">
-        <input
-          type="text"
-          value={lane.title}
-          onChange={(e) => onUpdateLaneTitle(lane.id, e.target.value)}
-          className="lane-title"
-        />
+      <input
+        type="text"
+        className="lane-title"
+        value={lane.title}
+        onChange={(e) => onUpdateLaneTitle(lane.id, e.target.value)}
+        style={{ backgroundColor: lane.color }}
+      />
         <button className="edit-color" onClick={() => setShowColorOptions(!showColorOptions)}>
           <FaPalette />
         </button>
