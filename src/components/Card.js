@@ -7,7 +7,7 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const Card = ({ card, laneId, onUpdateCard, onDeleteCard }) => {
+const Card = ({ card, laneId, onUpdateCard, onDeleteCard, onDragStart }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(card.title);
   const [editedDescription, setEditedDescription] = useState(card.description);

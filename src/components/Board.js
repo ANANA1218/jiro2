@@ -14,9 +14,34 @@ const Board = () => {
   const [newLaneTitle, setNewLaneTitle] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [filterPriority, setFilterPriority] = useState('All');
+  const [boardName, setBoardName] = useState(''); // State to hold board name
 
   const params = useParams();
   const effectiveBoardId = params.boardId;
+
+
+  useEffect(() => {
+    const fetchBoardData = async () => {
+      try {
+        const boardRef = doc(db, 'boards', effectiveBoardId);
+        const boardSnap = await getDoc(boardRef);
+
+        if (boardSnap.exists()) {
+          setBoardName(boardSnap.data().name); // Set the board name from Firestore
+        } else {
+          console.error('Board not found');
+          setBoardName('Unknown'); // Placeholder for error handling
+        }
+      } catch (error) {
+        console.error('Error fetching board:', error);
+      }
+    };
+
+    fetchBoardData();
+  }, [effectiveBoardId]);
+
+
+
 
   useEffect(() => {
       const fetchLanes = async () => {
@@ -157,53 +182,51 @@ const handleUpdateCard = async (laneId, cardId, updatedTitle, updatedDescription
     }
 };*/
 
-const handleDragStart = (e, cardId) => {
+const handleDragStart = (e, cardId, laneId) => {
     e.dataTransfer.setData('cardId', cardId);
+    e.dataTransfer.setData('laneId', laneId);
 };
 
 const handleDragOver = (e) => {
     e.preventDefault();
 };
 
-const handleDrop = async (e, cardId, sourceLaneId, targetLaneId) => {
-    e.preventDefault();
+const handleDrop = async (e, targetLaneId) => {
+  const cardId = e.dataTransfer.getData('cardId');
+  const sourceLaneId = e.dataTransfer.getData('laneId');
+
+  if (sourceLaneId !== targetLaneId) {
     const sourceLane = lanes.find(lane => lane.id === sourceLaneId);
     const targetLane = lanes.find(lane => lane.id === targetLaneId);
 
-    if (sourceLane && targetLane) {
-        const cardToMove = sourceLane.cards.find(card => card.id === cardId);
-        let updatedSourceCards = [...sourceLane.cards];
-        let updatedTargetCards = [...targetLane.cards];
+    const cardToMove = sourceLane.cards.find(card => card.id === cardId);
 
-        if (sourceLaneId !== targetLaneId) {
-            updatedSourceCards = sourceLane.cards.filter(card => card.id !== cardId);
-            updatedTargetCards = [...targetLane.cards, cardToMove];
-        } else {
-            const sourceIndex = sourceLane.cards.findIndex(card => card.id === cardId);
-            updatedTargetCards = [...sourceLane.cards];
-            updatedTargetCards.splice(sourceIndex, 1);
-            updatedTargetCards.splice(e.dataTransfer.getData('index'), 0, cardToMove);
-        }
+    const updatedSourceLaneCards = sourceLane.cards.filter(card => card.id !== cardId);
+    const updatedTargetLaneCards = [...targetLane.cards, cardToMove];
 
-        try {
-            await updateDoc(doc(db, `boards/${effectiveBoardId}/lanes`, sourceLaneId), { cards: updatedSourceCards });
-            await updateDoc(doc(db, `boards/${effectiveBoardId}/lanes`, targetLaneId), { cards: updatedTargetCards });
-            console.log(`Moved card "${cardId}" from lane "${sourceLaneId}" to lane "${targetLaneId}"`);
-            setLanes(lanes.map(lane => {
-                if (lane.id === sourceLaneId) {
-                    return { ...lane, cards: updatedSourceCards };
-                }
-                if (lane.id === targetLaneId) {
-                    return { ...lane, cards: updatedTargetCards };
-                }
-                return lane;
-            }));
-        } catch (error) {
-            console.error('Error moving card:', error);
-        }
+    const updatedLanes = lanes.map(lane => {
+      if (lane.id === sourceLaneId) {
+        return { ...lane, cards: updatedSourceLaneCards };
+      }
+      if (lane.id === targetLaneId) {
+        return { ...lane, cards: updatedTargetLaneCards };
+      }
+      return lane;
+    });
+
+    setLanes(updatedLanes);
+
+    try {
+      const sourceLaneRef = doc(db, `boards/${effectiveBoardId}/lanes/${sourceLaneId}`);
+      await updateDoc(sourceLaneRef, { cards: updatedSourceLaneCards });
+
+      const targetLaneRef = doc(db, `boards/${effectiveBoardId}/lanes/${targetLaneId}`);
+      await updateDoc(targetLaneRef, { cards: updatedTargetLaneCards });
+    } catch (error) {
+      console.error('Error updating lanes after card drop:', error);
     }
+  }
 };
-
 
 
 
@@ -248,6 +271,7 @@ const filteredLanes = lanes.map(lane => ({
   return (
     <div className="board-container">
       <div className="board-header">
+        <h2>{boardName}</h2> {/* Display the board name */}
         <div className="form-group">
           <input
             type="text"
