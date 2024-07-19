@@ -8,6 +8,8 @@ import Sidebar from './Sidebar'; // Import Sidebar
 import './Navbar.css';
 import logo from '../assets/logopastelnoback.png'; // Import the logo image
 import { ThemeContext } from './ThemeContext';
+import { auth, db } from './Firebase'; // Chemin relatif à votre fichier firebase.js
+
 
 const Navbar = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
