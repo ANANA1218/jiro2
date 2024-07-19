@@ -125,20 +125,3 @@ Les contributions sont les bienvenues ! Pour commencer :
 4. Poussez votre branche (`git push origin feature/ma-fonctionnalite`).
 5. Ouvrez une Pull Request.
 
-## Licence
-
-JIRO est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus d'informations.
-```
-
-### Explication
-
-- **Table des Matières**: Une table des matières pour faciliter la navigation dans le README.
-- **Fonctionnalités**: Une liste des principales fonctionnalités de l'application.
-- **Technologies Utilisées**: Une liste des technologies utilisées pour développer l'application.
-- **Installation et Configuration**: Des instructions détaillées sur la manière d'installer et de configurer l'application, y compris les prérequis, l'installation, la configuration initiale et le déploiement.
-- **Utilisation**: Des instructions sur la manière d'utiliser l'application, y compris l'inscription, la création de projets et la personnalisation.
-- **Tests**: Des instructions sur la manière d'exécuter les tests unitaires et d'intégration.
-- **Contribuer**: Des instructions pour les contributeurs potentiels.
-- **Licence**: Des informations sur la licence de l'application.
-
-Ce README fournit une documentation complète et détaillée pour l'application JIRO, couvrant tous les aspects nécessaires pour que les utilisateurs puissent installer, configurer, utiliser et contribuer à l'application.
