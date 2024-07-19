@@ -1,4 +1,6 @@
-Voici un exemple de README complet pour l'application JIRO. Ce document fournira des instructions détaillées sur l'installation, la configuration, l'utilisation et la contribution à l'application.
+Veuillez consulter le fichier Documentation Jiro pour la documentation plus detaillée du projet ainsi qu'un démo courte des principales fonctionnalités. 
+
+## Démo : https://jiro-ikram-annabelle.web.app/
 
 ```markdown
 # JIRO - Application de Gestion de Projet
