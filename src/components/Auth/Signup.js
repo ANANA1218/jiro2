@@ -5,25 +5,31 @@ import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/
 import './Signup.css';
 
 const Signup = () => {
+    // États pour stocker les valeurs des champs de formulaire et les erreurs
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
+    // Fonction appelée lors de la soumission du formulaire
     const onSubmit = async (e) => {
         e.preventDefault();
         
         try {
+            // Crée un utilisateur avec email et mot de passe
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            
             // Envoi de l'email de vérification
             await sendEmailVerification(auth.currentUser);
             
+            // Récupère les informations de l'utilisateur créé
             const user = userCredential.user;
             console.log(user);
             
             // Redirection vers la page de connexion après inscription réussie
             navigate("/login");
         } catch (error) {
+            // Met à jour l'état avec le message d'erreur si la création échoue
             setError(error.message);
         }
     };
@@ -55,6 +61,7 @@ const Signup = () => {
                     />
                 </div>
                 <button type="submit" className="btn-auth">S'inscrire</button>
+                {/* Affiche le message d'erreur s'il y en a un */}
                 {error && <p className="error-message">{error}</p>}
             </form>
             <p>
