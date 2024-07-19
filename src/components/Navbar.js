@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
@@ -7,9 +7,11 @@ import { Link } from 'react-router-dom';
 import Sidebar from './Sidebar'; // Import Sidebar
 import './Navbar.css';
 import logo from '../assets/logopastelnoback.png'; // Import the logo image
+import { ThemeContext } from './ThemeContext';
 
 const Navbar = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { theme } = useContext(ThemeContext);
 
   const handleSidebarOpen = () => {
     setSidebarOpen(true);
@@ -21,7 +23,7 @@ const Navbar = () => {
 
   return (
     <>
-      <AppBar position="static" className="navbar">
+      <AppBar position="static" className="navbar" style={{ backgroundColor: theme.navbarColor }}>
         <Toolbar className="navbar-toolbar">
           <div className="navbar-logo">
             <img src={logo} alt="JIRO Logo" className="navbar-logo-img"/>

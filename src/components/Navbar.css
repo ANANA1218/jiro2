@@ -139,3 +139,26 @@
     order: 3;
   }
 }
+/* Navbar.css */
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.navbar-brand {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.navbar-links a {
+  margin: 0 1rem;
+  text-decoration: none;
+  color: #0038ff; /* Vous pouvez changer cette couleur pour qu'elle soit visible sur tous les backgrounds */
+}
+
+.navbar-links a:hover {
+  text-decoration: underline;
+}

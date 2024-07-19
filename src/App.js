@@ -16,7 +16,7 @@ import Settings from './components/Settings';
 import { CssBaseline, Container } from '@mui/material';
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from './components/Firebase';
-import { ThemeProvider, ThemeContext } from './components/ThemeContext'; // Assurez-vous que cela est correctement importé
+import { ThemeProvider, ThemeContext } from './components/ThemeContext';
 
 function App() {
     const [initializing, setInitializing] = useState(true);
@@ -37,26 +37,34 @@ function App() {
 
     return (
         <ThemeProvider>
-            <Router>
-                <CssBaseline />
-                <div className="App">
-                    <Navbar />
-                    <Container maxWidth="lg" style={{ paddingTop: '2rem' }}>
-                        <Routes>
-                            <Route path="/" element={user ? <Navigate to="/profile" /> : <Home />} />
-                            <Route path="/profile" element={user ? <Profile /> : <Navigate to="/login" />} />
-                            <Route path="/trello-board/:boardId" element={user ? <TrelloBoard /> : <Navigate to="/login" />} />
-                            <Route path="/login" element={user ? <Navigate to="/profile" /> : <Login />} />
-                            <Route path="/signup" element={user ? <Navigate to="/profile" /> : <Signup />} />
-                            <Route path="/reset-password" element={<ResetPassword />} />
-                            <Route path="/new-board" element={user ? <NewBoard /> : <Navigate to="/login" />} />
-                            <Route path="/settings" element={user ? <Settings /> : <Navigate to="/login" />} />
-                        </Routes>
-                    </Container>
-                    <Footer />
-                </div>
-            </Router>
+            <AppContent user={user} />
         </ThemeProvider>
+    );
+}
+
+function AppContent({ user }) {
+    const { theme } = useContext(ThemeContext);
+
+    return (
+        <Router>
+            <CssBaseline />
+            <div className="App" style={{ backgroundImage: theme.backgroundImage }}>
+                <Navbar />
+                <Container maxWidth="lg" style={{ paddingTop: '2rem' }}>
+                    <Routes>
+                        <Route path="/" element={user ? <Navigate to="/profile" /> : <Home />} />
+                        <Route path="/profile" element={user ? <Profile /> : <Navigate to="/login" />} />
+                        <Route path="/trello-board/:boardId" element={user ? <TrelloBoard /> : <Navigate to="/login" />} />
+                        <Route path="/login" element={user ? <Navigate to="/profile" /> : <Login />} />
+                        <Route path="/signup" element={user ? <Navigate to="/profile" /> : <Signup />} />
+                        <Route path="/reset-password" element={<ResetPassword />} />
+                        <Route path="/new-board" element={user ? <NewBoard /> : <Navigate to="/login" />} />
+                        <Route path="/settings" element={user ? <Settings /> : <Navigate to="/login" />} />
+                    </Routes>
+                </Container>
+                <Footer />
+            </div>
+        </Router>
     );
 }
 

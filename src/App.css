@@ -5,8 +5,8 @@ body {
   background-size: cover;
 }
 
-.navbar, .sidebar {
-  background-color: #fff9db !important; /* pastel yellow */
+.sidebar {
+  background-color: hsl(291, 17%, 77%) !important; /* pastel yellow */
 }
 
 .board-container {
@@ -135,4 +135,20 @@ body {
 
 .App {
   background-image: var(--background-image);
+}
+
+
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.App {
+  min-height: 100vh;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center;
 }
