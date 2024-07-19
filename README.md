@@ -4,23 +4,8 @@ Voici un exemple de README complet pour l'application JIRO. Ce document fournira
 # JIRO - Application de Gestion de Projet
 
 JIRO est une application de gestion de projet conçue pour aider les équipes à organiser, planifier et collaborer efficacement. En combinant des fonctionnalités telles que la création de tableaux, la gestion des tâches et la personnalisation des thèmes, JIRO offre une plateforme intuitive et puissante pour améliorer la productivité des équipes.
+![image](https://github.com/user-attachments/assets/2f838833-a6a8-41ed-b6ad-8ca5ec092a69)
 
-## Table des Matières
-
-- [Fonctionnalités](#fonctionnalités)
-- [Technologies Utilisées](#technologies-utilisées)
-- [Installation et Configuration](#installation-et-configuration)
-  - [Prérequis](#prérequis)
-  - [Installation](#installation)
-  - [Configuration Initiale](#configuration-initiale)
-  - [Déploiement](#déploiement)
-- [Utilisation](#utilisation)
-  - [Inscription et Connexion](#inscription-et-connexion)
-  - [Création et Gestion des Projets](#création-et-gestion-des-projets)
-  - [Personnalisation des Thèmes et Avatars](#personnalisation-des-thèmes-et-avatars)
-- [Tests](#tests)
-- [Contribuer](#contribuer)
-- [Licence](#licence)
 
 ## Fonctionnalités
 
