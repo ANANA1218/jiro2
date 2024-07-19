@@ -6,7 +6,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { Link } from 'react-router-dom';
 import Sidebar from './Sidebar'; // Import Sidebar
 import './Navbar.css';
-import logo from '../assets/logopastelnoback.png'; // Import the logo image
+import logo from '../assets/logoblue.png'; // Import the logo image
 import { ThemeContext } from './ThemeContext';
 import { auth, db } from './Firebase'; // Chemin relatif à votre fichier firebase.js
 
