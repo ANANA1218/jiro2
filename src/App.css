@@ -1,7 +1,7 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: url('C:/Users/ing/Documents/M1_DEV/jiro2/public/yelloback.png') no-repeat center center fixed;
+  background: url('../public/yelloback.png') no-repeat center center fixed;
   background-size: cover;
 }
 
