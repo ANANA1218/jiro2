@@ -1,6 +1,6 @@
-Veuillez consulter le fichier Documentation Jiro pour la documentation plus detaillée du projet ainsi qu'un démo courte des principales fonctionnalités. 
+Veuillez consulter le fichier Documentation JIRO.pdf pour la documentation plus detaillée du projet ainsi qu'un démo courte des principales fonctionnalités. 
 
-## Démo : https://jiro-ikram-annabelle.web.app/
+** Démo  **: https://jiro-ikram-annabelle.web.app/
 
 ```markdown
 # JIRO - Application de Gestion de Projet
