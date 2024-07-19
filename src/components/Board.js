@@ -7,7 +7,6 @@ import { collection, getDocs, updateDoc, doc, getDoc, addDoc, deleteDoc } from '
 import Lane from './Column';
 
 const Board = () => {
-  // États pour stocker les données des colonnes, le titre de la nouvelle colonne, le terme de recherche, la priorité du filtre et le nom du tableau
   const [lanes, setLanes] = useState([]);
   const [newLaneTitle, setNewLaneTitle] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
@@ -17,7 +16,6 @@ const Board = () => {
   const params = useParams();
   const effectiveBoardId = params.boardId;
 
-  // useEffect pour récupérer le nom du tableau depuis Firestore
   useEffect(() => {
     const fetchBoardData = async () => {
       try {
@@ -25,10 +23,10 @@ const Board = () => {
         const boardSnap = await getDoc(boardRef);
 
         if (boardSnap.exists()) {
-          setBoardName(boardSnap.data().name); // Définit le nom du tableau à partir de Firestore
+          setBoardName(boardSnap.data().name);
         } else {
           console.error('Board not found');
-          setBoardName('Unknown'); // Placeholder pour la gestion des erreurs
+          setBoardName('Unknown');
         }
       } catch (error) {
         console.error('Error fetching board:', error);
@@ -38,7 +36,6 @@ const Board = () => {
     fetchBoardData();
   }, [effectiveBoardId]);
 
-  // useEffect pour récupérer les colonnes du tableau depuis Firestore
   useEffect(() => {
     const fetchLanes = async () => {
       if (effectiveBoardId) {
@@ -55,7 +52,6 @@ const Board = () => {
     fetchLanes();
   }, [effectiveBoardId]);
 
-  // Fonction pour créer une nouvelle colonne
   const handleCreateLane = async () => {
     if (newLaneTitle.trim() === '') {
       alert('Lane title cannot be empty!');
@@ -69,38 +65,32 @@ const Board = () => {
       });
       const newLane = { id: newLaneRef.id, title: newLaneTitle, cards: [] };
       setLanes([...lanes, newLane]);
-      console.log(`Created new lane "${newLaneTitle}" in Firestore with ID: ${newLaneRef.id}`);
       setNewLaneTitle('');
     } catch (error) {
       console.error('Error creating lane:', error);
     }
   };
 
-  // Fonction pour mettre à jour le titre d'une colonne
   const handleUpdateLaneTitle = async (laneId, newTitle) => {
     try {
       const laneRef = doc(db, `boards/${effectiveBoardId}/lanes`, laneId);
       await updateDoc(laneRef, { title: newTitle });
       setLanes(lanes.map(lane => (lane.id === laneId ? { ...lane, title: newTitle } : lane)));
-      console.log(`Updated lane "${laneId}" title to "${newTitle}" in Firestore`);
     } catch (error) {
       console.error('Error updating lane title:', error);
     }
   };
 
-  // Fonction pour supprimer une colonne
   const handleDeleteLane = async (laneId) => {
     try {
       const laneRef = doc(db, `boards/${effectiveBoardId}/lanes`, laneId);
       await deleteDoc(laneRef);
       setLanes(lanes.filter(lane => lane.id !== laneId));
-      console.log(`Deleted lane "${laneId}" from Firestore`);
     } catch (error) {
       console.error('Error deleting lane:', error);
     }
   };
 
-  // Fonction pour créer une nouvelle carte
   const handleCreateCard = async (laneId, cardTitle, cardDescription, cardPriority, cardAssignedTo, cardPicture) => {
     try {
       const laneRef = doc(db, `boards/${effectiveBoardId}/lanes`, laneId);
@@ -121,14 +111,12 @@ const Board = () => {
         const updatedCards = [...laneDoc.data().cards, newCard];
         await updateDoc(laneRef, { cards: updatedCards });
         setLanes(lanes.map(lane => (lane.id === laneId ? { ...lane, cards: updatedCards } : lane)));
-        console.log(`Created new card "${newCard.title}" in lane "${laneId}" in Firestore`);
       }
     } catch (error) {
       console.error('Error creating card:', error);
     }
   };
 
-  // Fonction pour mettre à jour une carte
   const handleUpdateCard = async (laneId, cardId, updatedTitle, updatedDescription, updatedLabel, updatedPriority, updatedAssignedTo, updatedPicture) => {
     try {
       const laneRef = doc(db, `boards/${effectiveBoardId}/lanes`, laneId);
@@ -152,14 +140,12 @@ const Board = () => {
 
         await updateDoc(laneRef, { cards: updatedCards });
         setLanes(lanes.map(lane => (lane.id === laneId ? { ...lane, cards: updatedCards } : lane)));
-        console.log(`Updated card "${cardId}" in lane "${laneId}" in Firestore`);
       }
     } catch (error) {
       console.error('Error updating card:', error);
     }
   };
 
-  // Fonction pour supprimer une carte
   const handleDeleteCard = async (laneId, cardId) => {
     try {
       const laneRef = doc(db, `boards/${effectiveBoardId}/lanes`, laneId);
@@ -169,25 +155,21 @@ const Board = () => {
         const updatedCards = laneDoc.data().cards.filter(card => card.id !== cardId);
         await updateDoc(laneRef, { cards: updatedCards });
         setLanes(lanes.map(lane => (lane.id === laneId ? { ...lane, cards: updatedCards } : lane)));
-        console.log(`Deleted card "${cardId}" from lane "${laneId}" in Firestore`);
       }
     } catch (error) {
       console.error('Error deleting card:', error);
     }
   };
 
-  // Fonction pour démarrer le drag and drop d'une carte
   const handleDragStart = (e, cardId, laneId) => {
     e.dataTransfer.setData('cardId', cardId);
     e.dataTransfer.setData('laneId', laneId);
   };
 
-  // Fonction pour permettre le drag and drop
   const handleDragOver = (e) => {
     e.preventDefault();
   };
 
-  // Fonction pour gérer le drop d'une carte dans une nouvelle colonne
   const handleDrop = async (e, targetLaneId) => {
     const cardId = e.dataTransfer.getData('cardId');
     const sourceLaneId = e.dataTransfer.getData('laneId');
@@ -225,18 +207,15 @@ const Board = () => {
     }
   };
 
-  // Fonction pour mettre à jour la couleur d'une colonne
   const handleUpdateLaneColor = async (laneId, newColor) => {
     try {
       const laneRef = doc(db, `boards/${effectiveBoardId}/lanes`, laneId);
       await updateDoc(laneRef, { color: newColor });
-      console.log(`Updated lane "${laneId}" color to "${newColor}" in Firestore`);
     } catch (error) {
       console.error('Error updating lane color:', error);
     }
   };
 
-  // Filtrer les colonnes en fonction de la priorité et du terme de recherche
   const filteredLanes = lanes.map(lane => ({
     ...lane,
     cards: lane.cards.filter(card => {
@@ -248,8 +227,8 @@ const Board = () => {
 
   return (
     <div className="board-container">
+      <h2 className="board-title">{boardName}</h2>
       <div className="board-header">
-        <h2>{boardName}</h2> {/* Affiche le nom du tableau */}
         <div className="form-group">
           <input
             type="text"
